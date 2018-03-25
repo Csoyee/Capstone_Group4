@@ -64,9 +64,9 @@ public class MainActivity extends NMapActivity {
         mMapViewerResourceProvider = new NMapViewerResourceProvider(this);
         mOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
 
-        //testOverlayMarker();  // overlay test
+        //testOverlayMarker(128.3925046, 36.1454420);  // overlay test
 
-        // GPS
+        // GPS test
 
         mMapLocationManager = new NMapLocationManager(this);
 
@@ -78,12 +78,11 @@ public class MainActivity extends NMapActivity {
 
 
     // overlaymarker TODO: 인자로 좌표를 넘겨서 원하는 좌표에 overlay를 찍을 수 있도록
-    private void testOverlayMarker() {
+    private void testOverlayMarker(double longtitude, double latitude) {
         int markerID = NMapPOIflagType.PIN;
         NMapPOIdata poIData = new NMapPOIdata(2, mMapViewerResourceProvider);
         poIData.beginPOIdata(2);
-        poIData.addPOIitem(128.3925046, 36.1454420, "marker1", markerID, 0);
-        poIData.addPOIitem(128.3915046, 36.1354420, "marker2", markerID, 0);
+        poIData.addPOIitem(longtitude, latitude, "marker1", markerID, 0);
         poIData.endPOIdata();
 
         NMapPOIdataOverlay poIdataOverlay = mOverlayManager.createPOIdataOverlay(poIData, null);
@@ -115,8 +114,8 @@ public class MainActivity extends NMapActivity {
 
     // Add GPS function
     private void startMyLocation() {
-        Log.e("Soyee", "log test");
         if (mMapLocationManager.isMyLocationEnabled()) {
+            // GPS가 켜져있는 경우
             if(!mMapView.isAutoRotateEnabled()) {
                 mapMyLocationOverlay.setCompassHeadingVisible(true);
                 mMapCompassManager.enableCompass();
@@ -126,7 +125,7 @@ public class MainActivity extends NMapActivity {
         } else {  // 현재 위치를 탐색중이 아니면.
                 Boolean isMyLocationEnabled = mMapLocationManager.enableMyLocation(false);
                 if(!isMyLocationEnabled){
-                    Toast.makeText(this, "Please enable a My Location source in system setting", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
                     Intent goToSettings = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                     startActivity(goToSettings);
                     return;
@@ -149,7 +148,7 @@ public class MainActivity extends NMapActivity {
             mMapController.setMapCenter(new NGeoPoint(126.978371, 37.5666091), 11);
         } else { // fail
             // log 남기기;
-
+            Log.e("FailLog", "onMapInitHandler Failed");
         }
     }
 }
