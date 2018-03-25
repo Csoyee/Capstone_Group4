@@ -43,7 +43,6 @@ public class MainActivity extends NMapActivity {
     // 단말기의 나침반
     NMapCompassManager mMapCompassManager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +65,15 @@ public class MainActivity extends NMapActivity {
         mOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
 
         //testOverlayMarker();  // overlay test
+
+        // GPS
+
+        mMapLocationManager = new NMapLocationManager(this);
+
+        mMapLocationManager.setOnLocationChangeListener(onMyLocationChangeListener);
+        mapMyLocationOverlay = mOverlayManager.createMyLocationOverlay(mMapLocationManager, mMapCompassManager);
+
+        startMyLocation();
     }
 
 
@@ -82,6 +90,49 @@ public class MainActivity extends NMapActivity {
         poIdataOverlay.showAllPOIdata(0);
     }
 
+
+    private final NMapLocationManager.OnLocationChangeListener onMyLocationChangeListener =
+            new NMapLocationManager.OnLocationChangeListener() {
+                @Override
+                public boolean onLocationChanged(NMapLocationManager locationManager, NGeoPoint myLocation) {
+
+                    if(mMapController != null) {
+                        mMapController.animateTo(myLocation);
+                    }
+                    return true;
+                }
+
+                @Override
+                public void onLocationUpdateTimeout(NMapLocationManager locationManager) {
+                }
+
+                @Override
+                public void onLocationUnavailableArea(NMapLocationManager locationManager, NGeoPoint myLocation) {
+                    stopMyLocation();
+                }
+            };
+
+
+    // Add GPS function
+    private void startMyLocation() {
+        Log.e("Soyee", "log test");
+        if (mMapLocationManager.isMyLocationEnabled()) {
+            if(!mMapView.isAutoRotateEnabled()) {
+                mapMyLocationOverlay.setCompassHeadingVisible(true);
+                mMapCompassManager.enableCompass();
+                mMapView.setAutoRotateEnabled(true, false);
+            }
+            mMapView.invalidate();
+        } else {  // 현재 위치를 탐색중이 아니면.
+                Boolean isMyLocationEnabled = mMapLocationManager.enableMyLocation(false);
+                if(!isMyLocationEnabled){
+                    Toast.makeText(this, "Please enable a My Location source in system setting", Toast.LENGTH_LONG).show();
+                    Intent goToSettings = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                    startActivity(goToSettings);
+                    return;
+                }
+        }
+    }
 
     private void stopMyLocation() {
         mMapLocationManager.disableMyLocation();
