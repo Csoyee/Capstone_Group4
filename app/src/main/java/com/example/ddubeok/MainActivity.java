@@ -53,6 +53,7 @@ public class MainActivity extends NMapActivity {
 
         mMapView.setClientId(API_KEY);
 
+
         // set the activity content to the map view
         setContentView(mMapView);
 
@@ -68,16 +69,20 @@ public class MainActivity extends NMapActivity {
 
         // GPS test
 
+        // location manager
         mMapLocationManager = new NMapLocationManager(this);
-
         mMapLocationManager.setOnLocationChangeListener(onMyLocationChangeListener);
+
+        // compass Manager --> TODO 나침반에 따라서 방향 인식
+        mMapCompassManager = new NMapCompassManager(this);
+
         mapMyLocationOverlay = mOverlayManager.createMyLocationOverlay(mMapLocationManager, mMapCompassManager);
 
-        startMyLocation();
+        startMyLocation(); // 내 위치 찾기 함수 호출
     }
 
 
-    // overlaymarker TODO: 인자로 좌표를 넘겨서 원하는 좌표에 overlay를 찍을 수 있도록
+    // overlaymarker
     private void testOverlayMarker(double longtitude, double latitude) {
         int markerID = NMapPOIflagType.PIN;
         NMapPOIdata poIData = new NMapPOIdata(2, mMapViewerResourceProvider);
@@ -92,19 +97,21 @@ public class MainActivity extends NMapActivity {
 
     private final NMapLocationManager.OnLocationChangeListener onMyLocationChangeListener =
             new NMapLocationManager.OnLocationChangeListener() {
+                // 위치가 변경되면 호출
                 @Override
                 public boolean onLocationChanged(NMapLocationManager locationManager, NGeoPoint myLocation) {
-
                     if(mMapController != null) {
                         mMapController.animateTo(myLocation);
                     }
                     return true;
                 }
 
+                // 정해진 시간 내에 위치 탐색 실패 시 호출
                 @Override
                 public void onLocationUpdateTimeout(NMapLocationManager locationManager) {
                 }
 
+                // 현재 위치가 지도상에 표시할 수 있는 범위를 벗어나는 경우
                 @Override
                 public void onLocationUnavailableArea(NMapLocationManager locationManager, NGeoPoint myLocation) {
                     stopMyLocation();
@@ -116,15 +123,15 @@ public class MainActivity extends NMapActivity {
     private void startMyLocation() {
         if (mMapLocationManager.isMyLocationEnabled()) {
             // GPS가 켜져있는 경우
-            if(!mMapView.isAutoRotateEnabled()) {
-                mapMyLocationOverlay.setCompassHeadingVisible(true);
-                mMapCompassManager.enableCompass();
-                mMapView.setAutoRotateEnabled(true, false);
+            if(!mMapView.isAutoRotateEnabled()) { // 지도 회전 기능 활성화 여부 확인
+                mapMyLocationOverlay.setCompassHeadingVisible(true);  // 나침반 각도 표시
+                mMapCompassManager.enableCompass(); // 나침반 모니터링 시작
+                mMapView.setAutoRotateEnabled(true, false);  // 지도 회전 기능 활성화
             }
             mMapView.invalidate();
         } else {  // 현재 위치를 탐색중이 아니면.
                 Boolean isMyLocationEnabled = mMapLocationManager.enableMyLocation(false);
-                if(!isMyLocationEnabled){
+                if(!isMyLocationEnabled){ // 위치 탐색 불가능
                     Toast.makeText(this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
                     Intent goToSettings = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                     startActivity(goToSettings);
@@ -135,6 +142,8 @@ public class MainActivity extends NMapActivity {
 
     private void stopMyLocation() {
         mMapLocationManager.disableMyLocation();
+
+        Toast.makeText(this, "GPS 추적 범위가 아닙니다.", Toast.LENGTH_LONG).show();
 
         if(mMapView.isAutoRotateEnabled()) {
             mapMyLocationOverlay.setCompassHeadingVisible(false);
