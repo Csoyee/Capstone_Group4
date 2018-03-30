@@ -63,3 +63,4 @@ $ git checkout -f master
 
 $ git merge [다른 branch]   # 현재 브랜치 master, master 에서 다른 브렌치를 머지. (다른 브린치 내용이 마스터에 적용)
 
+$ git push origin master    # 까지 해줘야 원격 git에 적용됨.
