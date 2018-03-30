@@ -50,3 +50,8 @@ $ git push origin :branch_name
 
 
 ### merge / Conflict
+- 다른 branch와 master branch를 합할 때 필요한 내용
+
+$ git checkout -f master
+$ git merge [다른 branch]   # 현재 브랜치 master, master 에서 다른 브렌치를 머지. (다른 브린치 내용이 마스터에 적용)
+
