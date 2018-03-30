@@ -23,7 +23,9 @@ $ git clone "https://github.com/Csoyee/Capstone_Group4"
 - 이 때, 내가 git에 push를 하기 전에 다른 사람이 push를 할 경우에 버전 문제로 push 가 안될 수 있다. 이 때 git pull을 통해 변경 사항을 받아와야 한다.
 
 $ git add *
+
 $ git commit -m "commit message"
+
 $ git push
 
 
@@ -38,14 +40,19 @@ $ git pull
 - 개발 중인 코드가 섞이기 때문에 branch를 나누어서 작업하는 경우가 있다.
 
 - 브랜치 생성
+
 $ git checkout -b new_branch_name
 
 - 해당 브랜치로 push
+
 $ git push origin branch_name
 
 - 브랜치 삭제
+
 $ git checkout master
+
 $ git branch -d branch_name
+
 $ git push origin :branch_name
 
 
@@ -53,5 +60,6 @@ $ git push origin :branch_name
 - 다른 branch와 master branch를 합할 때 필요한 내용
 
 $ git checkout -f master
+
 $ git merge [다른 branch]   # 현재 브랜치 master, master 에서 다른 브렌치를 머지. (다른 브린치 내용이 마스터에 적용)
 
