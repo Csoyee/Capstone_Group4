@@ -27,15 +27,17 @@ public class GPSManager extends NMapActivity{
     NMapCompassManager mMapCompassManager;
 
     NMapView MapView;   // map view from main activity
-    NMapController MapController; // controller from main activity
+    NMapController mMapController; // controller from main activity
     Context maincontext; // context for main activity
+
+    OverlayManager overlayManager;
 
     boolean startGPSFlag = false;
 
     public GPSManager (Context context, NMapView mapview, NMapController controller, OverlayManager overlaymanager) {
 
         MapView = mapview;
-        MapController = controller;
+        mMapController = controller;
         maincontext = context;
 
         // location manager
@@ -53,9 +55,9 @@ public class GPSManager extends NMapActivity{
                 // 위치가 변경되면 호출
                 @Override
                 public boolean onLocationChanged(NMapLocationManager locationManager, NGeoPoint myLocation) {
-                    if(MapController != null) {
+                    if(mMapController != null) {
                         if(!startGPSFlag){
-                            MapController.animateTo(myLocation); // GPS를 지도의 중심으로 화면 이동 --> 위치 변경 시마다 해당 위치로 지도의 중심이 움직이도록 함, 처음에만 필요해서 예외 처리
+                            mMapController.animateTo(myLocation); // GPS를 지도의 중심으로 화면 이동 --> 위치 변경 시마다 해당 위치로 지도의 중심이 움직이도록 함, 처음에만 필요해서 예외 처리
                             startGPSFlag = true;
                         }
                     }

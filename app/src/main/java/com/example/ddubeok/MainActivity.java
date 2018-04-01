@@ -2,7 +2,9 @@ package com.example.ddubeok;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,8 +20,10 @@ import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.nmapmodel.NMapError;
 
+import java.util.Locale;
 
-public class MainActivity extends NMapActivity {
+
+public class MainActivity extends NMapActivity implements TextToSpeech.OnInitListener{
 
     public static  final String API_KEY = "9__1zOI_pMvk5HpCOOGY"; // Client ID: client ID 맞게 수정해주세요!
 
@@ -29,6 +33,8 @@ public class MainActivity extends NMapActivity {
 
     OverlayManager overlayManager;
     GPSManager gpsManager;
+
+    TextToSpeech myTTS;
 
 
     @Override
@@ -55,6 +61,13 @@ public class MainActivity extends NMapActivity {
         gpsManager.startMyLocation(); // 내 위치 찾기 함수 호출
 
         // overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
+
+        /* TODO: TTS 객체 리스트(혹은 array) 만들어 필요에 따라 객체 생성.
+        if(myTTS == null || !myTTS.isSpeaking()) {
+            myTTS = new TextToSpeech(this, this);
+        }
+        // TTS 주석 처리
+        */
     }
 
     private void MapViewSetting () {
@@ -69,15 +82,6 @@ public class MainActivity extends NMapActivity {
 
     }
 
-//
-//    public void onMapInitHandler(NMapView mapView, NMapError errorInfo) {
-//        if (errorInfo == null) { // success
-//            mMapController.setMapCenter(new NGeoPoint(126.978371, 37.5666091), 11);
-//        } else { // fail
-//            // log 남기기;
-//            Log.e("FailLog", "onMapInitHandler Failed");
-//        }
-//    }
 
 
     public NMapView getViewer() {
@@ -87,5 +91,23 @@ public class MainActivity extends NMapActivity {
     public Context getContext() {
         Context c = MainActivity.this;
         return c;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(myTTS != null)   myTTS.shutdown();
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(myTTS != null)   myTTS.shutdown();
+    }
+
+    @Override
+    public void onInit(int i) {
+        String fortest = "티티에스 테스트.";
+
+        myTTS.speak(fortest, TextToSpeech.QUEUE_FLUSH, null);
     }
 }
