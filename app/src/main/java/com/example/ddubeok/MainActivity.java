@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.Toast;
 
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
@@ -59,7 +60,11 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         GPSButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
+                if(gpsManager.mMapLocationManager.isMyLocationEnabled()) {
+                    mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
+                } else {
+                    Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
