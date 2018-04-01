@@ -1,26 +1,15 @@
 package com.example.ddubeok;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.support.design.widget.FloatingActionButton;
+import android.view.View;
+import android.widget.Button;
+import android.widget.GridLayout;
 
 import com.nhn.android.maps.NMapActivity;
-import com.nhn.android.maps.NMapCompassManager;
 import com.nhn.android.maps.NMapController;
-import com.nhn.android.maps.NMapLocationManager;
 import com.nhn.android.maps.NMapView;
-import com.nhn.android.maps.maplib.NGeoPoint;
-import com.nhn.android.maps.nmapmodel.NMapError;
-
-import java.util.Locale;
 
 
 public class MainActivity extends NMapActivity implements TextToSpeech.OnInitListener{
@@ -44,10 +33,15 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         setContentView(R.layout.activity_main);
 
         mMapView = new NMapView(this);
+        mMapController = mMapView.getMapController();
+
         mMapView.setClientId(API_KEY);
 
         // set the activity content to the map view
-        setContentView(mMapView);
+//        setContentView(mMapView);
+        GridLayout MapContainer = (GridLayout) findViewById(R.id.gridLayout);
+
+        MapContainer.addView(mMapView);
 
         MapViewSetting();
 
@@ -59,6 +53,15 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         gpsManager = new GPSManager(this, mMapView, mMapController, overlayManager);
 
         gpsManager.startMyLocation(); // 내 위치 찾기 함수 호출
+
+        // 버튼 누르면 내 위치로 돌아옴. TODO 버튼 디자인.
+        FloatingActionButton GPSButton = (FloatingActionButton) findViewById(R.id.GPSbutton) ;
+        GPSButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
+            }
+        });
 
         // overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
 
@@ -78,7 +81,6 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         mMapView.setFocusableInTouchMode(true);
         mMapView.requestFocus();
         mMapView.setBuiltInZoomControls(true, null);
-        mMapController = mMapView.getMapController();
 
     }
 
