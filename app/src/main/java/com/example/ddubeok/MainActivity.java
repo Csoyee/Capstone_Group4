@@ -1,5 +1,6 @@
 package com.example.ddubeok;
 
+import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
@@ -29,12 +30,10 @@ public class MainActivity extends NMapActivity {
 
     NMapView mMapView;
     NMapController mMapController;
+    double curLongtitude = 0, curLatitude = 0;
+    boolean startGPSFlag = false;
 
-    // 지도 위 오버레이 객체 드로잉에 필요한 리소스 데이터 제공 클래스
-    NMapResourceProvider mMapViewerResourceProvider;
-    // 오버레이 객체 관리 클래스
-    NMapOverlayManager mOverlayManager;
-
+    OverlayManager overlayManager;
 
     // 지도위 현재 위치 표시하는 오버레이
     NMapMyLocationOverlay mapMyLocationOverlay;
@@ -50,24 +49,15 @@ public class MainActivity extends NMapActivity {
         setContentView(R.layout.activity_main);
 
         mMapView = new NMapView(this);
-
         mMapView.setClientId(API_KEY);
-
 
         // set the activity content to the map view
         setContentView(mMapView);
 
-        // initialize map view
-        mMapView.setClickable(true);
-        mMapController = mMapView.getMapController();
+        MapViewSetting();
 
-        // overlay
-        mMapViewerResourceProvider = new NMapViewerResourceProvider(this);
-        mOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
-
-        //testOverlayMarker(128.3925046, 36.1454420);  // overlay test
-
-        // GPS test
+        // overlay object
+        overlayManager = new OverlayManager(this, mMapView);
 
         // location manager
         mMapLocationManager = new NMapLocationManager(this);
@@ -76,24 +66,23 @@ public class MainActivity extends NMapActivity {
         // compass Manager --> TODO 나침반에 따라서 방향 인식
         mMapCompassManager = new NMapCompassManager(this);
 
-        mapMyLocationOverlay = mOverlayManager.createMyLocationOverlay(mMapLocationManager, mMapCompassManager);
+        mapMyLocationOverlay = overlayManager.mOverlayManager.createMyLocationOverlay(mMapLocationManager, mMapCompassManager);
 
         startMyLocation(); // 내 위치 찾기 함수 호출
+
     }
 
+    private void MapViewSetting () {
 
-    // overlaymarker
-    private void testOverlayMarker(double longtitude, double latitude) {
-        int markerID = NMapPOIflagType.PIN;
-        NMapPOIdata poIData = new NMapPOIdata(2, mMapViewerResourceProvider);
-        poIData.beginPOIdata(2);
-        poIData.addPOIitem(longtitude, latitude, "marker1", markerID, 0);
-        poIData.endPOIdata();
+        mMapView.setClickable(true);
+        mMapView.setEnabled(true);
+        mMapView.setFocusable(true);
+        mMapView.setFocusableInTouchMode(true);
+        mMapView.requestFocus();
+        mMapView.setBuiltInZoomControls(true, null);
+        mMapController = mMapView.getMapController();
 
-        NMapPOIdataOverlay poIdataOverlay = mOverlayManager.createPOIdataOverlay(poIData, null);
-        poIdataOverlay.showAllPOIdata(0);
     }
-
 
     private final NMapLocationManager.OnLocationChangeListener onMyLocationChangeListener =
             new NMapLocationManager.OnLocationChangeListener() {
@@ -101,8 +90,13 @@ public class MainActivity extends NMapActivity {
                 @Override
                 public boolean onLocationChanged(NMapLocationManager locationManager, NGeoPoint myLocation) {
                     if(mMapController != null) {
-                        mMapController.animateTo(myLocation);
+                        if(!startGPSFlag){
+                            mMapController.animateTo(myLocation); // GPS를 지도의 중심으로 화면 이동 --> 위치 변경 시마다 해당 위치로 지도의 중심이 움직이도록 함, 처음에만 필요해서 예외 처리
+                            startGPSFlag = true;
+                        }
                     }
+                    curLatitude = myLocation.getLatitude();
+                    curLongtitude = myLocation.getLongitude();
                     return true;
                 }
 
@@ -141,6 +135,7 @@ public class MainActivity extends NMapActivity {
     }
 
     private void stopMyLocation() {
+        startGPSFlag = false;
         mMapLocationManager.disableMyLocation();
 
         Toast.makeText(this, "GPS 추적 범위가 아닙니다.", Toast.LENGTH_LONG).show();
@@ -159,5 +154,15 @@ public class MainActivity extends NMapActivity {
             // log 남기기;
             Log.e("FailLog", "onMapInitHandler Failed");
         }
+    }
+
+
+    public NMapView getViewer() {
+        return mMapView;
+    }
+
+    public Context getContext() {
+        Context c = MainActivity.this;
+        return c;
     }
 }
