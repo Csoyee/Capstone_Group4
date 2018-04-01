@@ -82,17 +82,6 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
     }
 
-
-
-    public NMapView getViewer() {
-        return mMapView;
-    }
-
-    public Context getContext() {
-        Context c = MainActivity.this;
-        return c;
-    }
-
     @Override
     public void onStop() {
         super.onStop();
