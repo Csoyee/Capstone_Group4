@@ -8,7 +8,9 @@ import com.nhn.android.maps.NMapCompassManager;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapLocationManager;
 import com.nhn.android.maps.NMapView;
+import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.overlay.NMapPOIdata;
+import com.nhn.android.maps.overlay.NMapPOIitem;
 import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
@@ -25,15 +27,19 @@ public class OverlayManager extends NMapActivity {
     // 오버레이 객체 관리 클래스
     public NMapOverlayManager mOverlayManager;
 
-    public OverlayManager (Context context, NMapView mMapView) {
+    NMapController MapController;
+
+    public OverlayManager (Context context, NMapView mapview, NMapController mapcontroller) {
         // 생성자
 
+        MapController = mapcontroller;
+
         mMapViewerResourceProvider = new NMapViewerResourceProvider( context );
-        mOverlayManager = new NMapOverlayManager( context , mMapView, mMapViewerResourceProvider);
+        mOverlayManager = new NMapOverlayManager( context , mapview, mMapViewerResourceProvider);
     }
 
     // overlaymarker
-    private void testOverlayMarker(double longtitude, double latitude) {
+    public void testOverlayMarker(double longtitude, double latitude) {
         int markerID = NMapPOIflagType.PIN;
         NMapPOIdata poIData = new NMapPOIdata(2, mMapViewerResourceProvider);
         poIData.beginPOIdata(2);
@@ -45,10 +51,32 @@ public class OverlayManager extends NMapActivity {
     }
 
     // moveable overlay Marker
-    private void moveableOverlayMarker() {
+    public void moveableOverlayMarker() {
+        int marker1 = NMapPOIflagType.PIN;
+
+        // set POI data
+        NMapPOIdata poIData = new NMapPOIdata(1, mMapViewerResourceProvider);
+
+        poIData.beginPOIdata(1);
+        NMapPOIitem item = poIData.addPOIitem(null, "Touch and Drag to Move", marker1, 0);
+
+        item.setPoint(MapController.getMapCenter());
+        item.setFloatingMode(NMapPOIitem.FLOATING_TOUCH | NMapPOIitem.FLOATING_DRAG);
+        item.setRightButton(true);
+
+        NMapPOIdataOverlay poidataOverlay = mOverlayManager.createPOIdataOverlay(poIData, null);
+
+        poidataOverlay.setOnFloatingItemChangeListener(onPOIdataFloatingItemChangeListener);
 
     }
 
+    private final NMapPOIdataOverlay.OnFloatingItemChangeListener onPOIdataFloatingItemChangeListener = new NMapPOIdataOverlay.OnFloatingItemChangeListener() {
 
-
+        @Override
+        public void onPointChanged(NMapPOIdataOverlay poiDataOverlay, NMapPOIitem item) {
+            NGeoPoint point = item.getPoint();
+//            findPlacemarkAtLocation(point.longitude, point.latitude);
+//            item.setTitle(null);
+        }
+    };
 }
