@@ -93,8 +93,8 @@ public class GPSManager extends NMapActivity{
             Boolean isMyLocationEnabled = mMapLocationManager.enableMyLocation(false);
             if(!isMyLocationEnabled){ // 위치 탐색 불가능
                 Toast.makeText(maincontext, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
-                Intent goToSettings = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                startActivity(goToSettings);
+//                Intent goToSettings = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+//                startActivity(goToSettings);
                 return;
             }
         }
