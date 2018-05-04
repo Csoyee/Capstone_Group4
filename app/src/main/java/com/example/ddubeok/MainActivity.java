@@ -76,6 +76,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         }
         // TTS 주석 처리
         */
+        if(myTTS == null || !myTTS.isSpeaking()) {
+            myTTS = new TextToSpeech(this, this);
+        }
     }
 
     private void MapViewSetting () {
