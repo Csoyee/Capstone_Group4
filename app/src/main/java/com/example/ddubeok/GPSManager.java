@@ -30,7 +30,6 @@ public class GPSManager extends NMapActivity{
     NMapController mMapController; // controller from main activity
     Context maincontext; // context for main activity
 
-    OverlayManager overlayManager;
 
     boolean startGPSFlag = false;
 

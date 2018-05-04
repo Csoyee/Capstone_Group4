@@ -39,7 +39,6 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         mMapView.setClientId(API_KEY);
 
         // set the activity content to the map view
-//        setContentView(mMapView);
         GridLayout MapContainer = (GridLayout) findViewById(R.id.gridLayout);
 
         MapContainer.addView(mMapView);
@@ -68,7 +67,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             }
         });
 
-        // overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
+
+        overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
 
         /* TODO: TTS 객체 리스트(혹은 array) 만들어 필요에 따라 객체 생성.
         if(myTTS == null || !myTTS.isSpeaking()) {
