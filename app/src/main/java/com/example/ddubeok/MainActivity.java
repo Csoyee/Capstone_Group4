@@ -1,8 +1,10 @@
 package com.example.ddubeok;
 
+import android.content.Intent;
 import android.speech.tts.TextToSpeech;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -25,6 +27,17 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     GPSManager gpsManager;
 
     TextToSpeech myTTS;
+
+    // convinience 정보, setting에 따라서 바뀜
+    public static boolean drugstore = false;
+    public static boolean cafe = false;
+    public static boolean hospital = false;
+    public static boolean station = false;
+    public static boolean ATM = false;
+    public static boolean toilet = false;
+
+    public static boolean sound = true;
+    public static boolean vibration = true;
 
 
     @Override
@@ -54,7 +67,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
         gpsManager.startMyLocation(); // 내 위치 찾기 함수 호출
 
-        // 버튼 누르면 내 위치로 돌아옴. TODO 버튼 디자인.
+        // 버튼 누르면 내 위치로 돌아옴. TODO 버튼 디자인, 사진 크기 키우기
         FloatingActionButton GPSButton = (FloatingActionButton) findViewById(R.id.GPSbutton) ;
         GPSButton.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -68,6 +81,41 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         });
 
 
+        // TODO : activity design 다시 하기! [hospital 등 편의 시설 정보 추가]
+        FloatingActionButton SettingButton = (FloatingActionButton) findViewById(R.id.SettingButton) ;
+        SettingButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick (View view) {
+                // setting pop up 창 띄우기
+                Log.e("Dubug: ", "setting 창을 띄워야 한다!\n");
+                startActivity( new Intent(MainActivity.this, popUp.class ));
+            }
+        });
+
+        Button Fast = (Button) findViewById(R.id.FAST);
+        Fast.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick (View view ) {
+                // dijkstra path from database table
+            }
+        });
+
+        Button Comfort = (Button) findViewById(R.id.COMFORT);
+        Comfort.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick (View view ) {
+                // dijkstra path from database table
+            }
+        });
+
+        Button Safe = (Button) findViewById(R.id.SAFE);
+        Safe.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick (View view ) {
+                // dijkstra path from database table
+            }
+        });
+
         overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
 
         /* TODO: TTS 객체 리스트(혹은 array) 만들어 필요에 따라 객체 생성.
@@ -76,9 +124,6 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         }
         // TTS 주석 처리
         */
-        if(myTTS == null || !myTTS.isSpeaking()) {
-            myTTS = new TextToSpeech(this, this);
-        }
     }
 
     private void MapViewSetting () {
