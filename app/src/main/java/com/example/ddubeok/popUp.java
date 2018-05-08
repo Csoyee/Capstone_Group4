@@ -2,6 +2,7 @@ package com.example.ddubeok;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,6 +60,8 @@ public class popUp extends Activity {
         MainActivity.ATM = ATM.isChecked();
         MainActivity.toilet = toilet.isChecked();
 
+        MainActivity m = new MainActivity();
+        m.callConvMarker();
 
         finish();
     }

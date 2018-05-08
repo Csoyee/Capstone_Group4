@@ -22,6 +22,10 @@ import com.nhn.android.mapviewer.overlay.NMapResourceProvider;
 
 public class OverlayManager extends NMapActivity {
 
+    static NMapPOIdata cafePOI, ATMPOI, hospitalPOI, drugPOI, stationPOI, toiletPOI;
+    static NMapPOIdataOverlay cafedataOverlay, ATMdataOverlay, hospitadataOverlay, drugdataOverlay, stationdataOverlay, toiletdataOverlay;
+
+
     // 지도 위 오버레이 객체 드로잉에 필요한 리소스 데이터 제공 클래스
     public NMapResourceProvider mMapViewerResourceProvider;
     // 오버레이 객체 관리 클래스
@@ -48,6 +52,53 @@ public class OverlayManager extends NMapActivity {
 
         NMapPOIdataOverlay poIdataOverlay = mOverlayManager.createPOIdataOverlay(poIData, null);
         poIdataOverlay.showAllPOIdata(0);
+    }
+
+    // array overlaymarker
+    public void convMarker () {
+        Log.e("debugging:", "conMarker\n");
+
+        if (MainActivity.cafe) {
+            // TODO database에서 list 받아오기
+            Log.e("debugging:", "show up cafe!!\n");
+            int markerID = NMapPOIflagType.PIN;
+            int num = 1 ; // number of node TODO: list의 element 개수 넣기
+            cafePOI = new NMapPOIdata(2, mMapViewerResourceProvider);
+            cafePOI.beginPOIdata(2); // 인자값이 의미하는바는?
+            NMapPOIitem item;
+            for (int i =0 ; i < num ; i++) { // TODO: list에 있는 걸로 overlay 만들기
+                item = cafePOI.addPOIitem( 128.3925046, 36.1454420 , "test", markerID, 0); // sample data --> TODO: 위도 경도 값 수정
+                item.setRightButton(true); // button 누르면 길찾기 시작하게 ? TODO: button handler 찾기
+            }
+            cafePOI.endPOIdata();
+
+            cafedataOverlay = mOverlayManager.createPOIdataOverlay(cafePOI, null) ; // TODO: drawable image 수정
+            cafedataOverlay.showAllPOIdata(0);
+        } else {
+            // 안보이게 만들기 // 화면 한번 눌러야 overlay 만들어진거 없어짐
+            cafePOI.removeAllPOIdata();
+            cafedataOverlay.removeAllPOIdata();
+        }
+
+        if (MainActivity.ATM) {
+
+        }
+
+        if (MainActivity.station) {
+
+        }
+
+        if (MainActivity.toilet) {
+
+        }
+
+        if (MainActivity.hospital) {
+
+        }
+
+        if (MainActivity.drugstore) {
+
+        }
     }
 
     // moveable overlay Marker

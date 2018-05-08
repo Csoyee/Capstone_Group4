@@ -23,8 +23,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     NMapController mMapController;
     static public double curLongtitude = 0, curLatitude = 0;
 
-    OverlayManager overlayManager;
-    GPSManager gpsManager;
+    static  OverlayManager overlayManager;
+    static  GPSManager gpsManager;
 
     TextToSpeech myTTS;
 
@@ -97,6 +97,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
+                Toast.makeText(MainActivity.this, "빠른 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -105,6 +106,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
+                Toast.makeText(MainActivity.this, "편안한 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -113,10 +115,11 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
+                Toast.makeText(MainActivity.this, "안전한 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
             }
         });
 
-        overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
+      //  overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
 
         /* TODO: TTS 객체 리스트(혹은 array) 만들어 필요에 따라 객체 생성.
         if(myTTS == null || !myTTS.isSpeaking()) {
@@ -134,6 +137,15 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         mMapView.setFocusableInTouchMode(true);
         mMapView.requestFocus();
         mMapView.setBuiltInZoomControls(true, null);
+
+    }
+
+    public void callConvMarker() {
+        try {
+            overlayManager.convMarker();
+        } catch (NullPointerException e) {
+            Log.e("error occurred:", "NULLPOINT in overlayManager\n");
+        }
 
     }
 
