@@ -1,6 +1,8 @@
 package com.example.ddubeok;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -40,7 +42,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     public static boolean vibration = true;
 
     TextToSpeech TTS_object ;
-
+    Vibrator vibrator ;
     String content[] ={
             "빠른 길로 경로 안내를 시작합니다",
             "편안한 길로 경로 안내를 시작합니다",
@@ -73,6 +75,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         MapContainer.addView(mMapView);
 
         MapViewSetting();
+
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         // overlay object
         overlayManager = new OverlayManager(this, mMapView, mMapController);
@@ -114,6 +118,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             public void onClick (View view ) {
                 // dijkstra path from database table
                 speak(0);
+                runVibrator(1);
                 Toast.makeText(MainActivity.this, "빠른 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
             }
         });
@@ -197,9 +202,13 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 //      String fortest = "티티에스 테스트.";
     }
 
+    private void runVibrator(int time_vib){
+        for (int i = 0 ; i < time_vib ; i ++ ) {
+            vibrator.vibrate(1000);
+        }
+    }
 
     private void speak(int key){
-        Log.e("ERROR", "KEY,"+key);
         TTS_object.speak(content[key], TextToSpeech.QUEUE_FLUSH, null, null);
     }
     //상황별 key값을 받아 리스트의 멘트를 음성 출력 하는 메소드
