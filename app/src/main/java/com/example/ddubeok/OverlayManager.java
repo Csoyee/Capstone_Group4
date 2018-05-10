@@ -58,32 +58,45 @@ public class OverlayManager extends NMapActivity {
     public void convMarker () {
         Log.e("debugging:", "conMarker\n");
 
+        /*
         if (MainActivity.cafe) {
+
+        }
+*/
+        if (MainActivity.ATM) {
             // TODO database에서 list 받아오기
             Log.e("debugging:", "show up cafe!!\n");
             int markerID = NMapPOIflagType.PIN;
             int num = 1 ; // number of node TODO: list의 element 개수 넣기
-            cafePOI = new NMapPOIdata(2, mMapViewerResourceProvider);
-            cafePOI.beginPOIdata(2); // 인자값이 의미하는바는?
+            ATMPOI = new NMapPOIdata(2, mMapViewerResourceProvider);
+            ATMPOI.beginPOIdata(2); // 인자값이 의미하는바는?
             NMapPOIitem item;
-            for (int i =0 ; i < num ; i++) { // TODO: list에 있는 걸로 overlay 만들기
-                item = cafePOI.addPOIitem( 128.3925046, 36.1454420 , "test", markerID, 0); // sample data --> TODO: 위도 경도 값 수정
-                item.setRightButton(true); // button 누르면 길찾기 시작하게 ? TODO: button handler 찾기
-            }
-            cafePOI.endPOIdata();
 
-            cafedataOverlay = mOverlayManager.createPOIdataOverlay(cafePOI, null) ; // TODO: drawable image 수정
-            cafedataOverlay.showAllPOIdata(0);
+            item = ATMPOI.addPOIitem( 126.971123 , 37.296374 , "test", markerID, 0);
+            item.setRightButton(true);
+
+            item = ATMPOI.addPOIitem( 126.973030 ,37.296250, "test", markerID, 0);
+            item.setRightButton(true);
+
+            item = ATMPOI.addPOIitem( 126.971981, 37.296436  , "test", markerID, 0);
+            item.setRightButton(true);
+
+            item = ATMPOI.addPOIitem( 126.970502, 37.297360  , "test", markerID, 0);
+            item.setRightButton(true);
+
+            item = ATMPOI.addPOIitem( 126.970844, 37.299330 , "test", markerID, 0);
+            item.setRightButton(true);
+
+            ATMPOI.endPOIdata();
+
+            ATMdataOverlay = mOverlayManager.createPOIdataOverlay(ATMPOI, null) ; // TODO: drawable image 수정
+            ATMdataOverlay.showAllPOIdata(0);
         } else {
             // 안보이게 만들기 // 화면 한번 눌러야 overlay 만들어진거 없어짐
-            cafePOI.removeAllPOIdata();
-            cafedataOverlay.removeAllPOIdata();
+            ATMPOI.removeAllPOIdata();
+            ATMdataOverlay.removeAllPOIdata();
         }
-
-        if (MainActivity.ATM) {
-
-        }
-
+/*
         if (MainActivity.station) {
 
         }
@@ -95,9 +108,36 @@ public class OverlayManager extends NMapActivity {
         if (MainActivity.hospital) {
 
         }
+*/
+        if (MainActivity.drugstore){
+                // TODO database에서 list 받아오기
+                Log.e("debugging:", "show up drugstore!!\n");
+            int markerID = NMapPOIflagType.PIN;
+            int num = 1 ; // number of node TODO: list의 element 개수 넣기
+            drugPOI = new NMapPOIdata(2, mMapViewerResourceProvider);
+            drugPOI.beginPOIdata(2); // 인자값이 의미하는바는?
+            NMapPOIitem item;
 
-        if (MainActivity.drugstore) {
+            item = drugPOI.addPOIitem( 126.970983, 37.296989 , "test", markerID, 0);
+            item.setRightButton(true);
 
+            item = drugPOI.addPOIitem( 126.970187, 37.296765, "test", markerID, 0);
+            item.setRightButton(true);
+
+            item = drugPOI.addPOIitem( 126.970892, 37.298146  , "test", markerID, 0);
+            item.setRightButton(true);
+
+            item = drugPOI.addPOIitem( 126.971121,37.298370  , "test", markerID, 0);
+            item.setRightButton(true);
+
+            drugPOI.endPOIdata();
+
+            drugdataOverlay = mOverlayManager.createPOIdataOverlay(drugPOI, null) ; // TODO: drawable image 수정
+            drugdataOverlay.showAllPOIdata(0);
+        } else {
+            // 안보이게 만들기 // 화면 한번 눌러야 overlay 만들어진거 없어짐
+            drugPOI.removeAllPOIdata();
+            drugdataOverlay.removeAllPOIdata();
         }
     }
 

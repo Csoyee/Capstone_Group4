@@ -43,7 +43,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         String comment[]={
-            "빠른 길로 경로 안내를 시작합니다".
+            "빠른 길로 경로 안내를 시작합니다",
             "편안한 길로 경로 안내를 시작합니다",
             "안전한 길로 경로 안내를 시작합니다",
             "목적지 부근입니다",
@@ -51,8 +51,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             "경로를 이탈 하였습니다",
             "잠시 후 좌회전 입니다",
             "잠시 후 우회전 입니다",
-            "잠시 후 N시 방향 입니다";
-
+            "잠시 후 N시 방향 입니다"
         };
         //안내 멘트 리스트, 몇시 방향 안내는 추후 추가!
         super.onCreate(savedInstanceState);
@@ -180,7 +179,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         myTTS.speak(fortest, TextToSpeech.QUEUE_FLUSH, null);
     }
     private void speak(int key){
-        myTTS.speak(content[key],TextToSpeech.QUEUE_FLUSH,null,null);
+       // myTTS.speak(content[key],TextToSpeech.QUEUE_FLUSH,null,null);
     }
     //상황별 key값을 받아 리스트의 멘트를 음성 출력 하는 메소드
 }
