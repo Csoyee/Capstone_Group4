@@ -1,6 +1,8 @@
 package com.example.ddubeok;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +16,8 @@ import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapView;
 
+import org.w3c.dom.Text;
+
 
 public class MainActivity extends NMapActivity implements TextToSpeech.OnInitListener{
 
@@ -26,8 +30,6 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     static  OverlayManager overlayManager;
     static  GPSManager gpsManager;
 
-    TextToSpeech myTTS;
-
     // convinience 정보, setting에 따라서 바뀜
     public static boolean drugstore = false;
     public static boolean cafe = false;
@@ -39,10 +41,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     public static boolean sound = true;
     public static boolean vibration = true;
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        String comment[]={
+    TextToSpeech TTS_object ;
+    Vibrator vibrator ;
+    String content[] ={
             "빠른 길로 경로 안내를 시작합니다",
             "편안한 길로 경로 안내를 시작합니다",
             "안전한 길로 경로 안내를 시작합니다",
@@ -53,9 +54,15 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             "잠시 후 우회전 입니다",
             "잠시 후 N시 방향 입니다"
         };
+    };
+
+    static int len = -1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
         //안내 멘트 리스트, 몇시 방향 안내는 추후 추가!
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         mMapView = new NMapView(this);
@@ -69,6 +76,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         MapContainer.addView(mMapView);
 
         MapViewSetting();
+
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         // overlay object
         overlayManager = new OverlayManager(this, mMapView, mMapController);
@@ -109,6 +118,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
+                speak(0);
+                runVibrator(1);
                 Toast.makeText(MainActivity.this, "빠른 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
             }
         });
@@ -118,6 +129,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
+                speak(1);
                 Toast.makeText(MainActivity.this, "편안한 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
             }
         });
@@ -127,11 +139,14 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
+                speak(2);
                 Toast.makeText(MainActivity.this, "안전한 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
             }
         });
 
       //  overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
+
+        TTS_object = new TextToSpeech(this, this);
 
         /* TODO: TTS 객체 리스트(혹은 array) 만들어 필요에 따라 객체 생성.
         if(myTTS == null || !myTTS.isSpeaking()) {
@@ -164,22 +179,38 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     @Override
     public void onStop() {
         super.onStop();
-        if(myTTS != null)   myTTS.shutdown();
+        if(TTS_object != null)   TTS_object.shutdown();
+        for(int index = 0 ; index < len ; index ++ ){
+            if (TTS_object!=null){
+                TTS_object.shutdown();
+            }
+        }
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(myTTS != null)   myTTS.shutdown();
+        if(TTS_object != null)   TTS_object.shutdown();
+
+        for(int index = 0 ; index < len ; index ++ ){
+            if (TTS_object!=null){
+                TTS_object.shutdown();
+            }
+        }
     }
 
     @Override
     public void onInit(int i) {
-        String fortest = "티티에스 테스트.";
-
-        myTTS.speak(fortest, TextToSpeech.QUEUE_FLUSH, null);
+//      String fortest = "티티에스 테스트.";
     }
+
+    private void runVibrator(int time_vib){
+        for (int i = 0 ; i < time_vib ; i ++ ) {
+            vibrator.vibrate(1000);
+        }
+    }
+
     private void speak(int key){
-       // myTTS.speak(content[key],TextToSpeech.QUEUE_FLUSH,null,null);
+        TTS_object.speak(content[key], TextToSpeech.QUEUE_FLUSH, null, null);
     }
     //상황별 key값을 받아 리스트의 멘트를 음성 출력 하는 메소드
 }
