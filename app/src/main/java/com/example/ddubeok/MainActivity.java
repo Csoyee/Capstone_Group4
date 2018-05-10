@@ -14,6 +14,8 @@ import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapView;
 
+import org.w3c.dom.Text;
+
 
 public class MainActivity extends NMapActivity implements TextToSpeech.OnInitListener{
 
@@ -26,8 +28,6 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     static  OverlayManager overlayManager;
     static  GPSManager gpsManager;
 
-    TextToSpeech myTTS;
-
     // convinience 정보, setting에 따라서 바뀜
     public static boolean drugstore = false;
     public static boolean cafe = false;
@@ -39,11 +39,10 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     public static boolean sound = true;
     public static boolean vibration = true;
 
+    TextToSpeech TTS_object ;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        String comment[]={
-            "빠른 길로 경로 안내를 시작합니다".
+    String content[] ={
+            "빠른 길로 경로 안내를 시작합니다",
             "편안한 길로 경로 안내를 시작합니다",
             "안전한 길로 경로 안내를 시작합니다",
             "목적지 부근입니다",
@@ -51,12 +50,16 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             "경로를 이탈 하였습니다",
             "잠시 후 좌회전 입니다",
             "잠시 후 우회전 입니다",
-            "잠시 후 N시 방향 입니다";
+            "잠시 후 N시 방향 입니다"
+    };
 
-        };
+    static int len = -1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
         //안내 멘트 리스트, 몇시 방향 안내는 추후 추가!
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         mMapView = new NMapView(this);
@@ -110,6 +113,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
+                speak(0);
                 Toast.makeText(MainActivity.this, "빠른 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
             }
         });
@@ -119,6 +123,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
+                speak(1);
                 Toast.makeText(MainActivity.this, "편안한 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
             }
         });
@@ -128,11 +133,14 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
+                speak(2);
                 Toast.makeText(MainActivity.this, "안전한 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
             }
         });
 
       //  overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
+
+        TTS_object = new TextToSpeech(this, this);
 
         /* TODO: TTS 객체 리스트(혹은 array) 만들어 필요에 따라 객체 생성.
         if(myTTS == null || !myTTS.isSpeaking()) {
@@ -165,22 +173,34 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     @Override
     public void onStop() {
         super.onStop();
-        if(myTTS != null)   myTTS.shutdown();
+        if(TTS_object != null)   TTS_object.shutdown();
+        for(int index = 0 ; index < len ; index ++ ){
+            if (TTS_object!=null){
+                TTS_object.shutdown();
+            }
+        }
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(myTTS != null)   myTTS.shutdown();
+        if(TTS_object != null)   TTS_object.shutdown();
+
+        for(int index = 0 ; index < len ; index ++ ){
+            if (TTS_object!=null){
+                TTS_object.shutdown();
+            }
+        }
     }
 
     @Override
     public void onInit(int i) {
-        String fortest = "티티에스 테스트.";
-
-        myTTS.speak(fortest, TextToSpeech.QUEUE_FLUSH, null);
+//      String fortest = "티티에스 테스트.";
     }
+
+
     private void speak(int key){
-        myTTS.speak(content[key],TextToSpeech.QUEUE_FLUSH,null,null);
+        Log.e("ERROR", "KEY,"+key);
+        TTS_object.speak(content[key], TextToSpeech.QUEUE_FLUSH, null, null);
     }
     //상황별 key값을 받아 리스트의 멘트를 음성 출력 하는 메소드
 }
