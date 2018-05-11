@@ -7,9 +7,12 @@ import android.speech.tts.TextToSpeech;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.nhn.android.maps.NMapActivity;
@@ -53,7 +56,6 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             "잠시 후 좌회전 입니다",
             "잠시 후 우회전 입니다",
             "잠시 후 N시 방향 입니다"
-        };
     };
 
     static int len = -1;
@@ -212,5 +214,5 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     private void speak(int key){
         TTS_object.speak(content[key], TextToSpeech.QUEUE_FLUSH, null, null);
     }
-    //상황별 key값을 받아 리스트의 멘트를 음성 출력 하는 메소드
+
 }

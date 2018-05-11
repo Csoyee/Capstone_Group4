@@ -1,12 +1,15 @@
 package com.example.ddubeok;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapCompassManager;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapLocationManager;
+import com.nhn.android.maps.NMapOverlayItem;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.overlay.NMapPOIdata;
@@ -30,6 +33,8 @@ public class OverlayManager extends NMapActivity {
     public NMapResourceProvider mMapViewerResourceProvider;
     // 오버레이 객체 관리 클래스
     public NMapOverlayManager mOverlayManager;
+
+    Context temp;
 
     NMapController MapController;
 
@@ -64,32 +69,34 @@ public class OverlayManager extends NMapActivity {
         }
 */
         if (MainActivity.ATM) {
+
             // TODO database에서 list 받아오기
             Log.e("debugging:", "show up cafe!!\n");
             int markerID = NMapPOIflagType.PIN;
             int num = 1 ; // number of node TODO: list의 element 개수 넣기
             ATMPOI = new NMapPOIdata(2, mMapViewerResourceProvider);
             ATMPOI.beginPOIdata(2); // 인자값이 의미하는바는?
+
             NMapPOIitem item;
 
-            item = ATMPOI.addPOIitem( 126.971123 , 37.296374 , "test", markerID, 0);
+            item = ATMPOI.addPOIitem( 126.971123 , 37.296374 , "ATM", markerID, 0);
             item.setRightButton(true);
 
-            item = ATMPOI.addPOIitem( 126.973030 ,37.296250, "test", markerID, 0);
+            item = ATMPOI.addPOIitem( 126.973030 ,37.296250, "ATM", markerID, 0);
             item.setRightButton(true);
 
-            item = ATMPOI.addPOIitem( 126.971981, 37.296436  , "test", markerID, 0);
+            item = ATMPOI.addPOIitem( 126.971981, 37.296436  , "ATM", markerID, 0);
             item.setRightButton(true);
 
-            item = ATMPOI.addPOIitem( 126.970502, 37.297360  , "test", markerID, 0);
+            item = ATMPOI.addPOIitem( 126.970502, 37.297360  , "ATM", markerID, 0);
             item.setRightButton(true);
 
-            item = ATMPOI.addPOIitem( 126.970844, 37.299330 , "test", markerID, 0);
+            item = ATMPOI.addPOIitem( 126.970844, 37.299330 , "ATM", markerID, 0);
             item.setRightButton(true);
 
             ATMPOI.endPOIdata();
 
-            ATMdataOverlay = mOverlayManager.createPOIdataOverlay(ATMPOI, null) ; // TODO: drawable image 수정
+            ATMdataOverlay = mOverlayManager.createPOIdataOverlay(ATMPOI, null ) ; // TODO: drawable image 수정
             ATMdataOverlay.showAllPOIdata(0);
         } else {
             // 안보이게 만들기 // 화면 한번 눌러야 overlay 만들어진거 없어짐
@@ -118,16 +125,16 @@ public class OverlayManager extends NMapActivity {
             drugPOI.beginPOIdata(2); // 인자값이 의미하는바는?
             NMapPOIitem item;
 
-            item = drugPOI.addPOIitem( 126.970983, 37.296989 , "test", markerID, 0);
+            item = drugPOI.addPOIitem( 126.970983, 37.296989 , "drugstore", markerID, 0);
             item.setRightButton(true);
 
-            item = drugPOI.addPOIitem( 126.970187, 37.296765, "test", markerID, 0);
+            item = drugPOI.addPOIitem( 126.970187, 37.296765, "drugstore", markerID, 0);
             item.setRightButton(true);
 
-            item = drugPOI.addPOIitem( 126.970892, 37.298146  , "test", markerID, 0);
+            item = drugPOI.addPOIitem( 126.970892, 37.298146  , "drugstore", markerID, 0);
             item.setRightButton(true);
 
-            item = drugPOI.addPOIitem( 126.971121,37.298370  , "test", markerID, 0);
+            item = drugPOI.addPOIitem( 126.971121,37.298370  , "drugstore", markerID, 0);
             item.setRightButton(true);
 
             drugPOI.endPOIdata();
