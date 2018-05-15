@@ -62,29 +62,29 @@ public class OverlayManager extends NMapActivity {
         poIdataOverlay.showAllPOIdata(0);
     }
 
-    public void testOverlayPath () {
+    // TODO: 인자로 path list 넘겨줄 수 있도록!
+    public void testOverlayPath (int node_num) {
         NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider) ;
         poiData.beginPOIdata(2);
         // 출발지, 도착지 설정
-        poiData.addPOIitem(127.108099, 37.366034, "begin", NMapPOIflagType.FROM, 0) ;
-        poiData.addPOIitem(127.106279, 37.366380, "end", NMapPOIflagType.TO, 0 );
+        poiData.addPOIitem(126.974422, 37.298920, "begin", NMapPOIflagType.FROM, 0) ;
+        poiData.addPOIitem(126.973867, 37.296867, "end", NMapPOIflagType.TO, 0 );
         poiData.endPOIdata();
 
         NMapPOIdataOverlay poIdataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
         poIdataOverlay.showAllPOIdata(0);
-//        poIdataOverlay.setOnStateChangeListener(onPOIdataFloatingItemChangeListener);
+      //  poIdataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
 
-        NMapPathData pathData = new NMapPathData(9);
-        pathData.addPathPoint(127.108099, 37.366034, NMapPathLineStyle.TYPE_SOLID);
-        pathData.addPathPoint(127.108088, 37.366043, 0);
-        pathData.addPathPoint(127.108079, 37.365619, 0);
-        pathData.addPathPoint(127.107458, 37.365608, 0);
-        pathData.addPathPoint(127.107232, 37.365608, 0);
-        pathData.addPathPoint(127.106904, 37.365624, 0);
+        NMapPathData pathData = new NMapPathData( node_num);
+        pathData.addPathPoint(126.974422, 37.298920, NMapPathLineStyle.TYPE_SOLID);
+        pathData.addPathPoint(126.974393, 37.298874, 0);
+        pathData.addPathPoint(126.974190, 37.298921, 0);
+        pathData.addPathPoint(126.974050, 37.298506, 0);
+        pathData.addPathPoint(126.973629, 37.297776, 0);
         // 요 아래부터 점선으로 표시
-        pathData.addPathPoint(127.105933, 37.365621, NMapPathLineStyle.TYPE_DASH);
-        pathData.addPathPoint(127.105929, 37.366378, 0);
-        pathData.addPathPoint(127.106279, 37.366380, 0);
+        pathData.addPathPoint(126.974252, 37.297438, NMapPathLineStyle.TYPE_DASH);
+        pathData.addPathPoint(126.974148, 37.296909, 0);
+        pathData.addPathPoint(126.973867, 37.296867,0);
         pathData.endPathData();
 
         NMapPathDataOverlay pathDataOverlay = mOverlayManager.createPathDataOverlay(pathData);

@@ -148,7 +148,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
       //  overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
         // Path 함수 테스트
-        //overlayManager.testOverlayPath();
+        overlayManager.testOverlayPath(8);
 
         TTS_object = new TextToSpeech(this, this);
 
