@@ -1,8 +1,10 @@
 package com.example.ddubeok;
 
 import android.app.Activity;
+import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.nhn.android.maps.NMapActivity;
@@ -22,6 +24,17 @@ import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 import com.nhn.android.mapviewer.overlay.NMapPathDataOverlay;
 import com.nhn.android.mapviewer.overlay.NMapResourceProvider;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Created by youngchan on 2018-04-01.
  */
@@ -31,6 +44,10 @@ public class OverlayManager extends NMapActivity {
     static NMapPOIdata cafePOI, ATMPOI, hospitalPOI, drugPOI, stationPOI, toiletPOI;
     static NMapPOIdataOverlay cafedataOverlay, ATMdataOverlay, hospitadataOverlay, drugdataOverlay, stationdataOverlay, toiletdataOverlay;
 
+    // 편의 시설 정보 가져오기
+    String myJSON;
+    JSONArray peoples = null ;
+    ArrayList<HashMap<String, String >> personList = new ArrayList<HashMap<String, String>>() ;
 
     // 지도 위 오버레이 객체 드로잉에 필요한 리소스 데이터 제공 클래스
     public NMapResourceProvider mMapViewerResourceProvider;
@@ -95,89 +112,224 @@ public class OverlayManager extends NMapActivity {
     public void convMarker () {
         Log.e("debugging:", "conMarker\n");
 
-        /*
-        if (MainActivity.cafe) {
 
+        getData("http://13.125.247.173/getConv.php");
+
+        if (!MainActivity.cafe) {
+            cafePOI.removeAllPOIdata();
+            cafedataOverlay.removeAllPOIdata();
         }
-*/
-        if (MainActivity.ATM) {
 
-            // TODO database에서 list 받아오기
-            Log.e("debugging:", "show up cafe!!\n");
-            int markerID = NMapPOIflagType.PIN;
-            int num = 1 ; // number of node TODO: list의 element 개수 넣기
-            ATMPOI = new NMapPOIdata(2, mMapViewerResourceProvider);
-            ATMPOI.beginPOIdata(2); // 인자값이 의미하는바는?
-
-            NMapPOIitem item;
-
-            item = ATMPOI.addPOIitem( 126.971123 , 37.296374 , "ATM", markerID, 0);
-            item.setRightButton(true);
-
-            item = ATMPOI.addPOIitem( 126.973030 ,37.296250, "ATM", markerID, 0);
-            item.setRightButton(true);
-
-            item = ATMPOI.addPOIitem( 126.971981, 37.296436  , "ATM", markerID, 0);
-            item.setRightButton(true);
-
-            item = ATMPOI.addPOIitem( 126.970502, 37.297360  , "ATM", markerID, 0);
-            item.setRightButton(true);
-
-            item = ATMPOI.addPOIitem( 126.970844, 37.299330 , "ATM", markerID, 0);
-            item.setRightButton(true);
-
-            ATMPOI.endPOIdata();
-
-            ATMdataOverlay = mOverlayManager.createPOIdataOverlay(ATMPOI, null ) ; // TODO: drawable image 수정
-            ATMdataOverlay.showAllPOIdata(0);
-        } else {
-            // 안보이게 만들기 // 화면 한번 눌러야 overlay 만들어진거 없어짐
+        if (!MainActivity.ATM) {
             ATMPOI.removeAllPOIdata();
             ATMdataOverlay.removeAllPOIdata();
         }
-/*
-        if (MainActivity.station) {
 
+        if (!MainActivity.station) {
+            stationPOI.removeAllPOIdata();
+            stationdataOverlay.removeAllPOIdata();
         }
 
-        if (MainActivity.toilet) {
-
+        if (!MainActivity.toilet) {
+            toiletPOI.removeAllPOIdata();
+            toiletdataOverlay.removeAllPOIdata();
         }
 
-        if (MainActivity.hospital) {
-
+        if (!MainActivity.hospital) {
+            hospitalPOI.removeAllPOIdata();
+            hospitadataOverlay.removeAllPOIdata();
         }
-*/
-        if (MainActivity.drugstore){
-                // TODO database에서 list 받아오기
-                Log.e("debugging:", "show up drugstore!!\n");
-            int markerID = NMapPOIflagType.PIN;
-            int num = 1 ; // number of node TODO: list의 element 개수 넣기
-            drugPOI = new NMapPOIdata(2, mMapViewerResourceProvider);
-            drugPOI.beginPOIdata(2); // 인자값이 의미하는바는?
-            NMapPOIitem item;
 
-            item = drugPOI.addPOIitem( 126.970983, 37.296989 , "drugstore", markerID, 0);
-            item.setRightButton(true);
-
-            item = drugPOI.addPOIitem( 126.970187, 37.296765, "drugstore", markerID, 0);
-            item.setRightButton(true);
-
-            item = drugPOI.addPOIitem( 126.970892, 37.298146  , "drugstore", markerID, 0);
-            item.setRightButton(true);
-
-            item = drugPOI.addPOIitem( 126.971121,37.298370  , "drugstore", markerID, 0);
-            item.setRightButton(true);
-
-            drugPOI.endPOIdata();
-
-            drugdataOverlay = mOverlayManager.createPOIdataOverlay(drugPOI, null) ; // TODO: drawable image 수정
-            drugdataOverlay.showAllPOIdata(0);
-        } else {
-            // 안보이게 만들기 // 화면 한번 눌러야 overlay 만들어진거 없어짐
+        if (!MainActivity.drugstore){
             drugPOI.removeAllPOIdata();
             drugdataOverlay.removeAllPOIdata();
         }
+    }
+
+    public void getData ( String url ) {
+        class GetDataJSON extends AsyncTask<String, Void, String> {
+            @Override
+            protected String doInBackground(String... params) {
+
+                String uri = params[0];
+
+                BufferedReader bufferedReader = null;
+                try {
+                    URL url = new URL(uri);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    StringBuilder sb = new StringBuilder();
+
+                    bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+                    String json;
+                    while ((json = bufferedReader.readLine()) != null) {
+                        sb.append(json + "\n");
+                    }
+                    return sb.toString().trim();
+
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+            @Override
+            protected void onPostExecute(String result) {
+                myJSON = result;
+                try {
+                    JSONObject jsonObj = new JSONObject(myJSON);
+                    peoples = jsonObj.getJSONArray("result");
+
+                    for (int i = 0; i < peoples.length(); i++) {
+                        JSONObject c = peoples.getJSONObject(i);
+
+                        String id = c.getString("nodeID");
+                        String type = c.getString("type");
+                        String addr = c.getString("addr");
+                        String latitude = c.getString("latitude");
+                        String longtitude = c.getString("longtitude");
+
+                        HashMap<String, String> persons = new HashMap<String, String>();
+
+                        persons.put("nodeID", id);
+                        persons.put("type", type);
+                        persons.put("addr", addr);
+                        persons.put("latitude", latitude);
+                        persons.put("longtitude", longtitude);
+
+                        personList.add(persons);
+                    }
+
+                    Log.e("for Debugging", peoples.length()+"");
+
+                    if (MainActivity.ATM || MainActivity.toilet || MainActivity.cafe || MainActivity.hospital || MainActivity.station || MainActivity.drugstore) {
+                        int markerID = NMapPOIflagType.PIN;
+                        ATMPOI = new NMapPOIdata(2, mMapViewerResourceProvider);
+                        hospitalPOI = new NMapPOIdata(2, mMapViewerResourceProvider);
+                        stationPOI = new NMapPOIdata(2, mMapViewerResourceProvider);
+                        drugPOI = new NMapPOIdata(2, mMapViewerResourceProvider);
+                        toiletPOI = new NMapPOIdata(2, mMapViewerResourceProvider);
+                        cafePOI = new NMapPOIdata(2, mMapViewerResourceProvider);
+
+                        ATMPOI.beginPOIdata(2);
+                        hospitalPOI.beginPOIdata(2);
+                        stationPOI.beginPOIdata(2);
+                        drugPOI.beginPOIdata(2);
+                        toiletPOI.beginPOIdata(2);
+                        cafePOI.beginPOIdata(2);
+
+                        NMapPOIitem item;
+                        for (int i = 0; i < peoples.length(); i++) {
+                            if ( personList.get(i).get("type").equals("cafe") ) {
+                                if(MainActivity.cafe) {
+                                    item = cafePOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item.setRightButton(true);
+                                }
+                            } else if (personList.get(i).get("type").equals("drugstore")){
+                                if(MainActivity.drugstore) {
+                                    item = drugPOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item.setRightButton(true);
+                                }
+                            } else if (personList.get(i).get("type").equals("station")) {
+                                if(MainActivity.station) {
+                                    item = stationPOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item.setRightButton(true);
+                                }
+                            } else if (personList.get(i).get("type").equals("hospital")) {
+                                if(MainActivity.hospital) {
+                                    item = hospitalPOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item.setRightButton(true);
+                                }
+                            } else if (personList.get(i).get("type").equals("ATM")) {
+                                if(MainActivity.ATM) {
+                                    item = ATMPOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item.setRightButton(true);
+                                }
+                            } else if (personList.get(i).get("type").equals("toilet")) {
+                                if(MainActivity.toilet) {
+                                    item = toiletPOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item.setRightButton(true);
+                                }
+                            }
+
+                        }
+
+                        ATMPOI.endPOIdata();
+                        stationPOI.endPOIdata();
+                        hospitalPOI.endPOIdata();
+                        drugPOI.endPOIdata();
+                        toiletPOI.endPOIdata();
+                        cafePOI.endPOIdata();
+
+                        if (MainActivity.cafe) {
+                            if(cafedataOverlay != null) {
+                                cafedataOverlay.removeAllPOIdata();
+                            }
+                            cafedataOverlay = mOverlayManager.createPOIdataOverlay(cafePOI, null) ; // TODO: drawable image
+                            if(cafedataOverlay.size() > 0) {
+                                cafedataOverlay.showAllPOIdata(0);
+                            }
+                        }
+
+                        if (MainActivity.ATM) {
+                            if(ATMdataOverlay != null) {
+                                ATMdataOverlay.removeAllPOIdata();
+                            }
+                            ATMdataOverlay = mOverlayManager.createPOIdataOverlay(ATMPOI, null) ; // TODO: drawable image
+                            if ( ATMdataOverlay.size() > 0) {
+                                ATMdataOverlay.showAllPOIdata(0);
+                            }
+                        }
+
+                        if (MainActivity.station) {
+                            if(stationdataOverlay != null) {
+                                stationdataOverlay.removeAllPOIdata();
+                            }
+                            stationdataOverlay = mOverlayManager.createPOIdataOverlay(stationPOI, null) ; // TODO: drawable image
+                            if ( stationdataOverlay.size() > 0) {
+                                stationdataOverlay.showAllPOIdata(0);
+                            }
+                        }
+
+                        if (MainActivity.toilet) {
+                            if(toiletdataOverlay != null) {
+                                toiletdataOverlay.removeAllPOIdata();
+                            }
+                            toiletdataOverlay = mOverlayManager.createPOIdataOverlay(toiletPOI, null) ; // TODO: drawable image
+                            if(toiletdataOverlay.size() > 0) {
+                                toiletdataOverlay.showAllPOIdata(0);
+                            }
+                        }
+
+                        if (MainActivity.hospital) {
+                            if(hospitadataOverlay != null) {
+                                hospitadataOverlay.removeAllPOIdata();
+                            }
+                            hospitadataOverlay = mOverlayManager.createPOIdataOverlay(hospitalPOI, null) ; // TODO: drawable image
+                            if(hospitadataOverlay.size() > 0) {
+                                hospitadataOverlay.showAllPOIdata(0);
+                            }
+                        }
+
+                        if (MainActivity.drugstore){
+                            if(drugdataOverlay != null) {
+                                drugdataOverlay.removeAllPOIdata();
+                            }
+                            drugdataOverlay = mOverlayManager.createPOIdataOverlay(drugPOI, null) ; // TODO: drawable image
+                            if(drugdataOverlay.size() > 0) {
+                                drugdataOverlay.showAllPOIdata(0);
+                            }
+                        }
+
+                        personList.clear();
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        GetDataJSON g = new GetDataJSON();
+        g.execute(url);
     }
 
     // moveable overlay Marker
