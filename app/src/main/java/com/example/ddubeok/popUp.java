@@ -35,8 +35,8 @@ public class popUp extends Activity {
 
     /*
     String myJSON;
-    JSONArray peoples = null;
-    ArrayList<HashMap<String, String>> personList = new ArrayList<HashMap<String, String>>();
+    JSONArray conv = null;
+    ArrayList<HashMap<String, String>> convList = new ArrayList<HashMap<String, String>>();
 */
 
     @Override
@@ -59,78 +59,9 @@ public class popUp extends Activity {
 //        {
 //            getData("http://13.125.247.173/table.php");
 
-//            Toast.makeText(this, personList.get(0).get("latitude"), Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, convList.get(0).get("latitude"), Toast.LENGTH_LONG).show();
 //        }
     }
-/*
-    protected void showList() {
-        try {
-            JSONObject jsonObj = new JSONObject(myJSON);
-            peoples = jsonObj.getJSONArray("result");
-
-            for (int i = 0; i < peoples.length(); i++) {
-                JSONObject c = peoples.getJSONObject(i);
-
-                String id = c.getString("nodeID");
-                String type = c.getString("type");
-                String addr = c.getString("addr");
-                String latitude = c.getString("latitude");
-                String longtitude = c.getString("longtitude");
-
-                HashMap<String, String> persons = new HashMap<String, String>();
-
-                persons.put("nodeID", id);
-                persons.put("type", type);
-                persons.put("addr", addr);
-                persons.put("latitude", latitude);
-                persons.put("longtitude", longtitude);
-
-                personList.add(persons);
-
-                //Toast.makeText(this, personList.get(0).get("latitude"), Toast.LENGTH_LONG).show();
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void getData(String url) {
-        class GetDataJSON extends AsyncTask<String, Void, String> {
-            @Override
-            protected String doInBackground(String... params) {
-
-                String uri = params[0];
-
-                BufferedReader bufferedReader = null;
-                try {
-                    URL url = new URL(uri);
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    StringBuilder sb = new StringBuilder();
-
-                    bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-                    String json;
-                    while ((json = bufferedReader.readLine()) != null) {
-                        sb.append(json + "\n");
-                    }
-                    return sb.toString().trim();
-
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-            @Override
-            protected void onPostExecute(String result) {
-                myJSON = result;
-                showList();
-            }
-        }
-        GetDataJSON g = new GetDataJSON();
-        g.execute(url);
-    }
-    */
 
     private void setting () {
         soundSwitch.setChecked(MainActivity.sound);

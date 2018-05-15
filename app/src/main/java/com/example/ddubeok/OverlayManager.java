@@ -1,24 +1,17 @@
 package com.example.ddubeok;
 
-import android.app.Activity;
-import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.nhn.android.maps.NMapActivity;
-import com.nhn.android.maps.NMapCompassManager;
 import com.nhn.android.maps.NMapController;
-import com.nhn.android.maps.NMapLocationManager;
-import com.nhn.android.maps.NMapOverlayItem;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.maps.overlay.NMapPOIitem;
 import com.nhn.android.maps.overlay.NMapPathData;
 import com.nhn.android.maps.overlay.NMapPathLineStyle;
-import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 import com.nhn.android.mapviewer.overlay.NMapPathDataOverlay;
@@ -46,8 +39,8 @@ public class OverlayManager extends NMapActivity {
 
     // 편의 시설 정보 가져오기
     String myJSON;
-    JSONArray peoples = null ;
-    ArrayList<HashMap<String, String >> personList = new ArrayList<HashMap<String, String>>() ;
+    JSONArray conv = null ;
+    ArrayList<HashMap<String, String >> convList = new ArrayList<HashMap<String, String>>() ;
 
     // 지도 위 오버레이 객체 드로잉에 필요한 리소스 데이터 제공 클래스
     public NMapResourceProvider mMapViewerResourceProvider;
@@ -176,10 +169,10 @@ public class OverlayManager extends NMapActivity {
                 myJSON = result;
                 try {
                     JSONObject jsonObj = new JSONObject(myJSON);
-                    peoples = jsonObj.getJSONArray("result");
+                    conv = jsonObj.getJSONArray("result");
 
-                    for (int i = 0; i < peoples.length(); i++) {
-                        JSONObject c = peoples.getJSONObject(i);
+                    for (int i = 0; i < conv.length(); i++) {
+                        JSONObject c = conv.getJSONObject(i);
 
                         String id = c.getString("nodeID");
                         String type = c.getString("type");
@@ -195,10 +188,10 @@ public class OverlayManager extends NMapActivity {
                         persons.put("latitude", latitude);
                         persons.put("longtitude", longtitude);
 
-                        personList.add(persons);
+                        convList.add(persons);
                     }
 
-                    Log.e("for Debugging", peoples.length()+"");
+                    Log.e("for Debugging", conv.length()+"");
 
                     if (MainActivity.ATM || MainActivity.toilet || MainActivity.cafe || MainActivity.hospital || MainActivity.station || MainActivity.drugstore) {
                         int markerID = NMapPOIflagType.PIN;
@@ -217,35 +210,35 @@ public class OverlayManager extends NMapActivity {
                         cafePOI.beginPOIdata(2);
 
                         NMapPOIitem item;
-                        for (int i = 0; i < peoples.length(); i++) {
-                            if ( personList.get(i).get("type").equals("cafe") ) {
+                        for (int i = 0; i < conv.length(); i++) {
+                            if ( convList.get(i).get("type").equals("cafe") ) {
                                 if(MainActivity.cafe) {
-                                    item = cafePOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item = cafePOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
                                     item.setRightButton(true);
                                 }
-                            } else if (personList.get(i).get("type").equals("drugstore")){
+                            } else if (convList.get(i).get("type").equals("drugstore")){
                                 if(MainActivity.drugstore) {
-                                    item = drugPOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item = drugPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
                                     item.setRightButton(true);
                                 }
-                            } else if (personList.get(i).get("type").equals("station")) {
+                            } else if (convList.get(i).get("type").equals("station")) {
                                 if(MainActivity.station) {
-                                    item = stationPOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item = stationPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
                                     item.setRightButton(true);
                                 }
-                            } else if (personList.get(i).get("type").equals("hospital")) {
+                            } else if (convList.get(i).get("type").equals("hospital")) {
                                 if(MainActivity.hospital) {
-                                    item = hospitalPOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item = hospitalPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
                                     item.setRightButton(true);
                                 }
-                            } else if (personList.get(i).get("type").equals("ATM")) {
+                            } else if (convList.get(i).get("type").equals("ATM")) {
                                 if(MainActivity.ATM) {
-                                    item = ATMPOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item = ATMPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
                                     item.setRightButton(true);
                                 }
-                            } else if (personList.get(i).get("type").equals("toilet")) {
+                            } else if (convList.get(i).get("type").equals("toilet")) {
                                 if(MainActivity.toilet) {
-                                    item = toiletPOI.addPOIitem( Double.parseDouble(personList.get(i).get("longtitude")) , Double.parseDouble(personList.get(i).get("latitude")) , personList.get(i).get("addr"), markerID, 0);
+                                    item = toiletPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
                                     item.setRightButton(true);
                                 }
                             }
@@ -319,7 +312,7 @@ public class OverlayManager extends NMapActivity {
                             }
                         }
 
-                        personList.clear();
+                        convList.clear();
 
                     }
 

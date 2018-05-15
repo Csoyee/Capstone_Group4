@@ -208,13 +208,17 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     }
 
     private void runVibrator(int time_vib){
-        for (int i = 0 ; i < time_vib ; i ++ ) {
-            vibrator.vibrate(1000);
+        if(vibration) {
+            for (int i = 0; i < time_vib; i++) {
+                vibrator.vibrate(1000);
+            }
         }
     }
 
     private void speak(int key){
-        TTS_object.speak(content[key], TextToSpeech.QUEUE_FLUSH, null, null);
+        if(sound) {
+            TTS_object.speak(content[key], TextToSpeech.QUEUE_FLUSH, null, null);
+        }
     }
 
 }
