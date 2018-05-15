@@ -14,9 +14,12 @@ import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.maps.overlay.NMapPOIitem;
+import com.nhn.android.maps.overlay.NMapPathData;
+import com.nhn.android.maps.overlay.NMapPathLineStyle;
 import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
+import com.nhn.android.mapviewer.overlay.NMapPathDataOverlay;
 import com.nhn.android.mapviewer.overlay.NMapResourceProvider;
 
 /**
@@ -57,6 +60,35 @@ public class OverlayManager extends NMapActivity {
 
         NMapPOIdataOverlay poIdataOverlay = mOverlayManager.createPOIdataOverlay(poIData, null);
         poIdataOverlay.showAllPOIdata(0);
+    }
+
+    public void testOverlayPath () {
+        NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider) ;
+        poiData.beginPOIdata(2);
+        // 출발지, 도착지 설정
+        poiData.addPOIitem(127.108099, 37.366034, "begin", NMapPOIflagType.FROM, 0) ;
+        poiData.addPOIitem(127.106279, 37.366380, "end", NMapPOIflagType.TO, 0 );
+        poiData.endPOIdata();
+
+        NMapPOIdataOverlay poIdataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
+        poIdataOverlay.showAllPOIdata(0);
+//        poIdataOverlay.setOnStateChangeListener(onPOIdataFloatingItemChangeListener);
+
+        NMapPathData pathData = new NMapPathData(9);
+        pathData.addPathPoint(127.108099, 37.366034, NMapPathLineStyle.TYPE_SOLID);
+        pathData.addPathPoint(127.108088, 37.366043, 0);
+        pathData.addPathPoint(127.108079, 37.365619, 0);
+        pathData.addPathPoint(127.107458, 37.365608, 0);
+        pathData.addPathPoint(127.107232, 37.365608, 0);
+        pathData.addPathPoint(127.106904, 37.365624, 0);
+        // 요 아래부터 점선으로 표시
+        pathData.addPathPoint(127.105933, 37.365621, NMapPathLineStyle.TYPE_DASH);
+        pathData.addPathPoint(127.105929, 37.366378, 0);
+        pathData.addPathPoint(127.106279, 37.366380, 0);
+        pathData.endPathData();
+
+        NMapPathDataOverlay pathDataOverlay = mOverlayManager.createPathDataOverlay(pathData);
+
     }
 
     // array overlaymarker
@@ -167,6 +199,7 @@ public class OverlayManager extends NMapActivity {
         poidataOverlay.setOnFloatingItemChangeListener(onPOIdataFloatingItemChangeListener);
 
     }
+
 
     private final NMapPOIdataOverlay.OnFloatingItemChangeListener onPOIdataFloatingItemChangeListener = new NMapPOIdataOverlay.OnFloatingItemChangeListener() {
 
