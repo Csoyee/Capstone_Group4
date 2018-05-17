@@ -2,25 +2,30 @@ package com.example.ddubeok;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapView;
 
-import org.w3c.dom.Text;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 
 public class MainActivity extends NMapActivity implements TextToSpeech.OnInitListener{
@@ -73,6 +78,10 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
     static int len = -1;
 
+    //searching
+    boolean searchFlag = true;
+    boolean start_default = false;
+    String start_node, end_node;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,34 +140,34 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         // TODO: node 정보 받아오기
         Button Fast = (Button) findViewById(R.id.FAST);
 
-        // TODO: 출발지가 내 위치 혹은 공백인 경우 (0, 위도, 경도) 전송, 출발지가 주소인 경우 (1, 주소) 전송
-        // TODO: 도착지가 공백인 경우 (Toast message, 도착지를 입력해주세요), 도착지 수소인 경우 (1, 주소) 전송
         Fast.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick (View view ) {
-                boolean flag = true;
+                searchFlag = true;
+                start_default = false;
                 EditText start = (EditText) findViewById(R.id.StartText);
                 EditText end = (EditText) findViewById(R.id.EndText);
-                String start_node, end_node;
                 start_node = start.getText().toString() ;
                 end_node = end.getText().toString() ;
 
                 if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
                     if(!GPSManager.GPSOInfo) {
                         Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
-                        flag = false ;
+                        searchFlag = false ;
+                    } else {
+                        start_default = true ;
                     }
                 }
-                if(flag && (end_node.length() == 0) ) {
+                if(searchFlag && (end_node.length() == 0) ) {
                     Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
                     speak(0);
-                    flag = false ;
+                    searchFlag = false ;
                 }
                 Log.e("debugging", start_node+","+end_node);
 
-                if(flag) {
-                    speak(1);
-                    // runVibrator(1); // for test
+                if(searchFlag) {
+                    // POST data
+                    putData("http://13.125.247.173/startend.php");
                 }
             }
         });
@@ -167,30 +176,31 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         Comfort.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick (View view ) {
-                // dijkstra path from database table
-                boolean flag = true;
+                searchFlag = true;
+                start_default = false;
                 EditText start = (EditText) findViewById(R.id.StartText);
                 EditText end = (EditText) findViewById(R.id.EndText);
-                String start_node, end_node;
                 start_node = start.getText().toString() ;
                 end_node = end.getText().toString() ;
 
                 if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
                     if(!GPSManager.GPSOInfo) {
                         Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
-                        flag = false ;
+                        searchFlag = false ;
+                    } else {
+                        start_default = true ;
                     }
                 }
-                if(flag && (end_node.length() == 0) ) {
+                if(searchFlag && (end_node.length() == 0) ) {
                     Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
                     speak(0);
-                    flag = false ;
+                    searchFlag = false ;
                 }
                 Log.e("debugging", start_node+","+end_node);
 
-                if(flag) {
-                    speak(2);
-                    // runVibrator(1); // for test
+                if(searchFlag) {
+                    // POST data
+                    putData("http://13.125.247.173/startend.php");
                 }
             }
         });
@@ -200,30 +210,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
-                boolean flag = true;
-                EditText start = (EditText) findViewById(R.id.StartText);
-                EditText end = (EditText) findViewById(R.id.EndText);
-                String start_node, end_node;
-                start_node = start.getText().toString() ;
-                end_node = end.getText().toString() ;
-
-                if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
-                    if(!GPSManager.GPSOInfo) {
-                        Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
-                        flag = false ;
-                    }
-                }
-                if(flag && (end_node.length() == 0) ) {
-                    Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
-                    speak(0);
-                    flag = false ;
-                }
-                Log.e("debugging", start_node+","+end_node);
-
-                if(flag) {
-                    speak(3);
-                    // runVibrator(1); // for test
-                }
+                speak(3);
             }
         });
 
@@ -241,6 +228,62 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         */
     }
 
+    public void putData ( String url ) {
+        class PutDataJSON extends AsyncTask<String, Void, String> {
+            @Override
+            protected String doInBackground(String... params) {
+                String uri = params[0];
+                HttpURLConnection conn=null;
+                try {
+                    URL url = new URL(uri);
+                    String postParameters ="";
+                    JSONObject json = new JSONObject();
+                    if (start_default) {
+                        postParameters = postParameters+ "latitude="+gpsManager.mMapLocationManager.getMyLocation().getLatitude()
+                                + "& longtitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude();
+                    } else {
+                        postParameters = postParameters+"startnode="+start_node;
+                    }
+                    postParameters=postParameters+"&endaddr="+end_node;
+
+                    speak(3);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000);
+                    conn.setConnectTimeout(15000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoOutput(true);
+
+                    speak(4);
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    int responseStateus = conn.getResponseCode();
+                    Log.e("TAG", "POST response code-" + responseStateus);
+
+
+                } catch (Throwable t) {
+                    Toast.makeText(MainActivity.this, "Request failed:" + t.toString(), Toast.LENGTH_LONG).show();
+                } finally {
+                    if (conn != null) {
+                        conn.disconnect();
+                    } else {
+                        Log.e("Connetction", "Failed");
+                    }
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(String result) {
+                // TODO: speak function 빠른길, 편한길, 안전한 길 구분
+                speak(1);
+                // runVibrator(1); // for test
+            }
+        }
+        PutDataJSON g = new PutDataJSON();
+        g.execute(url);
+    }
     private void MapViewSetting () {
 
         mMapView.setClickable(true);
