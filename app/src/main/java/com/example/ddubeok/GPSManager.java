@@ -19,6 +19,7 @@ import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
 
 public class GPSManager extends NMapActivity{
 
+    public static boolean GPSOInfo = true;
     // 지도위 현재 위치 표시하는 오버레이
     NMapMyLocationOverlay mapMyLocationOverlay;
     // 현재위치 탐색 기능 사용 클래스
@@ -86,11 +87,13 @@ public class GPSManager extends NMapActivity{
                 mapMyLocationOverlay.setCompassHeadingVisible(true);  // 나침반 각도 표시
                 mMapCompassManager.enableCompass(); // 나침반 모니터링 시작
                 MapView.setAutoRotateEnabled(true, false);  // 지도 회전 기능 활성화
+                GPSOInfo = true ;
             }
             MapView.invalidate();
         } else {  // 현재 위치를 탐색중이 아니면.
             Boolean isMyLocationEnabled = mMapLocationManager.enableMyLocation(false);
             if(!isMyLocationEnabled){ // 위치 탐색 불가능
+                GPSOInfo = false ;
                 Toast.makeText(maincontext, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
 //                Intent goToSettings = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
 //                startActivity(goToSettings);

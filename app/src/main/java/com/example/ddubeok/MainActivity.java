@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.PopupWindow;
 import android.widget.Toast;
@@ -46,7 +47,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
     TextToSpeech TTS_object ;
     Vibrator vibrator ;
+    // TODO: content 확정,
     String content[] ={
+            "도착지를 입력해주세요",
             "빠른 길로 경로 안내를 시작합니다",
             "편안한 길로 경로 안내를 시작합니다",
             "안전한 길로 경로 안내를 시작합니다",
@@ -55,10 +58,21 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             "경로를 이탈 하였습니다",
             "잠시 후 좌회전 입니다",
             "잠시 후 우회전 입니다",
-            "잠시 후 N시 방향 입니다"
+            "잠시 후 1시 방향 입니다",
+            "잠시 후 2시 방향 입니다",
+            "잠시 후 3시 방향 입니다",
+            "잠시 후 4시 방향 입니다",
+            "잠시 후 5시 방향 입니다",
+            "잠시 후 6시 방향 입니다",
+            "잠시 후 7시 방향 입니다",
+            "잠시 후 8시 방향 입니다",
+            "잠시 후 9시 방향 입니다",
+            "잠시 후 10시 방향 입니다",
+            "잠시 후 11시 방향 입니다"
     };
 
     static int len = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +117,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             }
         });
 
-
-        // TODO : activity design 다시 하기! [hospital 등 편의 시설 정보 추가]
+        // TODO : activity design 다시 하기!
         FloatingActionButton SettingButton = (FloatingActionButton) findViewById(R.id.SettingButton) ;
         SettingButton.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -115,14 +128,38 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             }
         });
 
+        // TODO: node 정보 받아오기
         Button Fast = (Button) findViewById(R.id.FAST);
+
+        // TODO: 출발지가 내 위치 혹은 공백인 경우 (0, 위도, 경도) 전송, 출발지가 주소인 경우 (1, 주소) 전송
+        // TODO: 도착지가 공백인 경우 (Toast message, 도착지를 입력해주세요), 도착지 수소인 경우 (1, 주소) 전송
         Fast.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick (View view ) {
-                // dijkstra path from database table
-                speak(0);
-                runVibrator(1);
-                Toast.makeText(MainActivity.this, "빠른 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
+                boolean flag = true;
+                EditText start = (EditText) findViewById(R.id.StartText);
+                EditText end = (EditText) findViewById(R.id.EndText);
+                String start_node, end_node;
+                start_node = start.getText().toString() ;
+                end_node = end.getText().toString() ;
+
+                if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
+                    if(!GPSManager.GPSOInfo) {
+                        Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
+                        flag = false ;
+                    }
+                }
+                if(flag && (end_node.length() == 0) ) {
+                    Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
+                    speak(0);
+                    flag = false ;
+                }
+                Log.e("debugging", start_node+","+end_node);
+
+                if(flag) {
+                    speak(1);
+                    // runVibrator(1); // for test
+                }
             }
         });
 
@@ -131,8 +168,30 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
-                speak(1);
-                Toast.makeText(MainActivity.this, "편안한 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
+                boolean flag = true;
+                EditText start = (EditText) findViewById(R.id.StartText);
+                EditText end = (EditText) findViewById(R.id.EndText);
+                String start_node, end_node;
+                start_node = start.getText().toString() ;
+                end_node = end.getText().toString() ;
+
+                if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
+                    if(!GPSManager.GPSOInfo) {
+                        Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
+                        flag = false ;
+                    }
+                }
+                if(flag && (end_node.length() == 0) ) {
+                    Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
+                    speak(0);
+                    flag = false ;
+                }
+                Log.e("debugging", start_node+","+end_node);
+
+                if(flag) {
+                    speak(2);
+                    // runVibrator(1); // for test
+                }
             }
         });
 
@@ -141,8 +200,30 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
-                speak(2);
-                Toast.makeText(MainActivity.this, "안전한 길 안내를 시작합니다.", Toast.LENGTH_LONG).show();
+                boolean flag = true;
+                EditText start = (EditText) findViewById(R.id.StartText);
+                EditText end = (EditText) findViewById(R.id.EndText);
+                String start_node, end_node;
+                start_node = start.getText().toString() ;
+                end_node = end.getText().toString() ;
+
+                if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
+                    if(!GPSManager.GPSOInfo) {
+                        Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
+                        flag = false ;
+                    }
+                }
+                if(flag && (end_node.length() == 0) ) {
+                    Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
+                    speak(0);
+                    flag = false ;
+                }
+                Log.e("debugging", start_node+","+end_node);
+
+                if(flag) {
+                    speak(3);
+                    // runVibrator(1); // for test
+                }
             }
         });
 
