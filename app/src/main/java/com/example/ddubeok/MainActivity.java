@@ -276,7 +276,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             }
             @Override
             protected void onPostExecute(String result) {
-                // TODO: speak function 빠른길, 편한길, 안전한 길 구분
+                // TODO: speak function 빠른길, 편한길, 안전한 길 구분.
                 speak(1);
                 // runVibrator(1); // for test
             }
