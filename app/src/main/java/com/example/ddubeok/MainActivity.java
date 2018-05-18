@@ -159,13 +159,15 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                         Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
                         searchFlag = false;
                     }
+                } else {
+                    Log.e("debugging, sy", start_node);
                 }
                 if(searchFlag && (end_node.length() == 0) ) {
                     Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
                     speak(0);
                     searchFlag = false ;
                 }
-                Log.e("debugging", start_node+","+end_node);
+              //  Log.e("debugging", start_node+","+end_node);
 
                 if(searchFlag) {
                     // POST data
@@ -182,8 +184,11 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 start_default = false;
                 EditText start = (EditText) findViewById(R.id.StartText);
                 EditText end = (EditText) findViewById(R.id.EndText);
+                start_node ="";
+                end_node = "";
                 start_node = start.getText().toString() ;
                 end_node = end.getText().toString() ;
+
 
                 if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
                     if(!GPSManager.GPSOInfo) {
@@ -198,7 +203,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     speak(0);
                     searchFlag = false ;
                 }
-                Log.e("debugging", start_node+","+end_node);
+//                Log.e("debugging", start_node+","+end_node);
 
                 if(searchFlag) {
                     // POST data
@@ -242,12 +247,14 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     JSONObject json = new JSONObject();
                     if (start_default) {
                         postParameters = postParameters+ "latitude="+gpsManager.mMapLocationManager.getMyLocation().getLatitude()
-                                + "& longtitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude();
+                                + "& longtitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude()
+                                ;//+ "& startnode=NULL";
                     } else {
                         postParameters = postParameters+"startnode="+start_node;
                     }
-                    postParameters=postParameters+"&endaddr="+end_node;
+                    postParameters=postParameters+"& endnode="+end_node;
 
+                    Log.e("debugging soyee,", postParameters);
                     speak(3);
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setReadTimeout(10000);
