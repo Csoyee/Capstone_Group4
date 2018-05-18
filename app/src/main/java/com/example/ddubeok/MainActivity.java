@@ -152,22 +152,19 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 end_node = end.getText().toString() ;
 
                 if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
-                    if(gpsManager.mMapLocationManager.isMyLocationEnabled()) {
+                    if (gpsManager.mMapLocationManager.isMyLocationEnabled()) {
                         mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
                         start_default = true;
                     } else {
                         Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
                         searchFlag = false;
                     }
-                } else {
-                    Log.e("debugging, sy", start_node);
                 }
                 if(searchFlag && (end_node.length() == 0) ) {
                     Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
                     speak(0);
                     searchFlag = false ;
                 }
-              //  Log.e("debugging", start_node+","+end_node);
 
                 if(searchFlag) {
                     // POST data
@@ -250,11 +247,11 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                                 + "& longtitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude()
                                 ;//+ "& startnode=NULL";
                     } else {
+                        postParameters = postParameters+"latitude=NULL& longtitude=NULL &";
                         postParameters = postParameters+"startnode="+start_node;
                     }
                     postParameters=postParameters+"& endnode="+end_node;
 
-                    Log.e("debugging soyee,", postParameters);
                     speak(3);
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setReadTimeout(10000);
