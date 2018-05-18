@@ -113,6 +113,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
         gpsManager.startMyLocation(); // 내 위치 찾기 함수 호출
 
+
         // 버튼 누르면 내 위치로 돌아옴. TODO 버튼 디자인, 사진 크기 키우기
         FloatingActionButton GPSButton = (FloatingActionButton) findViewById(R.id.GPSbutton) ;
         GPSButton.setOnClickListener(new Button.OnClickListener() {
@@ -151,11 +152,12 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 end_node = end.getText().toString() ;
 
                 if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
-                    if(!GPSManager.GPSOInfo) {
-                        Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
-                        searchFlag = false ;
+                    if(gpsManager.mMapLocationManager.isMyLocationEnabled()) {
+                        mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
+                        start_default = true;
                     } else {
-                        start_default = true ;
+                        Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
+                        searchFlag = false;
                     }
                 }
                 if(searchFlag && (end_node.length() == 0) ) {
