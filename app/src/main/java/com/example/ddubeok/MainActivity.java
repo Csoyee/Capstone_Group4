@@ -188,11 +188,12 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
 
                 if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
-                    if(!GPSManager.GPSOInfo) {
-                        Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
-                        searchFlag = false ;
+                    if (gpsManager.mMapLocationManager.isMyLocationEnabled()) {
+                        mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
+                        start_default = true;
                     } else {
-                        start_default = true ;
+                        Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
+                        searchFlag = false;
                     }
                 }
                 if(searchFlag && (end_node.length() == 0) ) {
@@ -200,7 +201,6 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     speak(0);
                     searchFlag = false ;
                 }
-//                Log.e("debugging", start_node+","+end_node);
 
                 if(searchFlag) {
                     // POST data
@@ -214,7 +214,25 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             @Override
             public void onClick (View view ) {
                 // dijkstra path from database table
-                speak(3);
+                if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
+                    if (gpsManager.mMapLocationManager.isMyLocationEnabled()) {
+                        mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
+                        start_default = true;
+                    } else {
+                        Toast.makeText(MainActivity.this, "GPS가 꺼져있습니다.", Toast.LENGTH_LONG).show();
+                        searchFlag = false;
+                    }
+                }
+                if(searchFlag && (end_node.length() == 0) ) {
+                    Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
+                    speak(0);
+                    searchFlag = false ;
+                }
+
+                if(searchFlag) {
+                    // POST data
+                    putData("http://13.125.247.173/startend.php");
+                }
             }
         });
 
@@ -232,64 +250,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         */
     }
 
-    public void putData ( String url ) {
-        class PutDataJSON extends AsyncTask<String, Void, String> {
-            @Override
-            protected String doInBackground(String... params) {
-                String uri = params[0];
-                HttpURLConnection conn=null;
-                try {
-                    URL url = new URL(uri);
-                    String postParameters ="";
-                    JSONObject json = new JSONObject();
-                    if (start_default) {
-                        postParameters = postParameters+ "latitude="+gpsManager.mMapLocationManager.getMyLocation().getLatitude()
-                                + "& longtitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude()
-                                ;//+ "& startnode=NULL";
-                    } else {
-                        postParameters = postParameters+"latitude=NULL& longtitude=NULL &";
-                        postParameters = postParameters+"startnode="+start_node;
-                    }
-                    postParameters=postParameters+"& endnode="+end_node;
 
-                    speak(3);
-                    conn = (HttpURLConnection) url.openConnection();
-                    conn.setReadTimeout(10000);
-                    conn.setConnectTimeout(15000);
-                    conn.setRequestMethod("POST");
-                    conn.setDoOutput(true);
-
-                    speak(4);
-                    OutputStream outputStream = conn.getOutputStream();
-                    outputStream.write(postParameters.getBytes("UTF-8"));
-                    outputStream.flush();
-                    outputStream.close();
-
-                    int responseStateus = conn.getResponseCode();
-                    Log.e("TAG", "POST response code-" + responseStateus);
-
-
-                } catch (Throwable t) {
-                    Toast.makeText(MainActivity.this, "Request failed:" + t.toString(), Toast.LENGTH_LONG).show();
-                } finally {
-                    if (conn != null) {
-                        conn.disconnect();
-                    } else {
-                        Log.e("Connetction", "Failed");
-                    }
-                }
-                return null;
-            }
-            @Override
-            protected void onPostExecute(String result) {
-                // TODO: speak function 빠른길, 편한길, 안전한 길 구분.
-                speak(1);
-                // runVibrator(1); // for test
-            }
-        }
-        PutDataJSON g = new PutDataJSON();
-        g.execute(url);
-    }
     private void MapViewSetting () {
 
         mMapView.setClickable(true);
@@ -351,4 +312,62 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         }
     }
 
+    public void putData ( String url ) {
+        class PutDataJSON extends AsyncTask<String, Void, String> {
+            @Override
+            protected String doInBackground(String... params) {
+                String uri = params[0];
+                HttpURLConnection conn=null;
+                try {
+                    URL url = new URL(uri);
+                    String postParameters ="";
+                    JSONObject json = new JSONObject();
+                    if (start_default) {
+                        postParameters = postParameters+ "latitude="+gpsManager.mMapLocationManager.getMyLocation().getLatitude()
+                                + "& longtitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude()
+                        ;//+ "& startnode=NULL";
+                    } else {
+                        postParameters = postParameters+"latitude=NULL& longtitude=NULL &";
+                        postParameters = postParameters+"startnode="+start_node;
+                    }
+                    postParameters=postParameters+"& endnode="+end_node;
+
+                    speak(3);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000);
+                    conn.setConnectTimeout(15000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoOutput(true);
+
+                    speak(4);
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    int responseStateus = conn.getResponseCode();
+                    Log.e("TAG", "POST response code-" + responseStateus);
+
+
+                } catch (Throwable t) {
+                    Toast.makeText(MainActivity.this, "Request failed:" + t.toString(), Toast.LENGTH_LONG).show();
+                } finally {
+                    if (conn != null) {
+                        conn.disconnect();
+                    } else {
+                        Log.e("Connetction", "Failed");
+                    }
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(String result) {
+                // TODO: speak function 빠른길, 편한길, 안전한 길 구분.
+                speak(1);
+                // runVibrator(1); // for test
+            }
+        }
+        PutDataJSON g = new PutDataJSON();
+        g.execute(url);
+    }
 }
