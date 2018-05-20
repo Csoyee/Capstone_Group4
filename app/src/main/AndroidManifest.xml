@@ -20,7 +20,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".popUp" android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
-
+        </activity>
+        <activity android:name=".ReviewSafe" android:theme="@android:style/Theme.Dialog">
+        </activity>
+        <activity android:name=".ReviewComf" android:theme="@android:style/Theme.Dialog">
         </activity>
     </application>
 

@@ -102,7 +102,7 @@ public class popUp extends Activity {
 
     @Override
     public void onBackPressed() {
-        // 저장 안하고 끄기
+        // 저장 하고 끄기
         MainActivity.sound = soundSwitch.isChecked();
         MainActivity.vibration = vibSwitch.isChecked();
         MainActivity.drugstore = drugStore.isChecked();

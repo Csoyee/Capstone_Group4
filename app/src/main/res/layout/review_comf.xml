@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:background="#eeeeee"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="53dp"
+            android:background="#ff7a00"
+            android:gravity="center"
+            android:text="Notice"
+            android:textColor="#fff"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/txtText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:alpha="0.87"
+            android:gravity="center"
+            android:textColor="#000"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#66bdbdbd" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/Good"
+            android:layout_width="100dp"
+            android:layout_height="53dp"
+            android:background="#00000000"
+            android:onClick="mOnGood"
+            android:padding="13dp"
+            android:text="좋았어요"
+            android:textColor="#ff7a00"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/far"
+            android:layout_width="100dp"
+            android:layout_height="53dp"
+            android:background="#00000000"
+            android:onClick="mOnFar"
+            android:padding="13dp"
+            android:text="돌아갔어요"
+            android:textColor="#ff7a00"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/safe"
+            android:layout_width="100dp"
+            android:layout_height="53dp"
+            android:background="#00000000"
+            android:onClick="mOnBad"
+            android:padding="13dp"
+            android:text="불편했어요"
+            android:textColor="#ff7a00"
+            android:textSize="15sp" />
+    </LinearLayout>
+    <!--// 닫기 버튼 -->
+</LinearLayout>

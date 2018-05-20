@@ -97,6 +97,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
         mMapView.setClientId(API_KEY);
 
+        TTS_object = new TextToSpeech(this, this);
+
         // set the activity content to the map view
         GridLayout MapContainer = (GridLayout) findViewById(R.id.gridLayout);
 
@@ -207,6 +209,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 if(searchFlag) {
                     // POST data
                     putData("http://13.125.247.173/startend.php");
+                    startActivity( new Intent(MainActivity.this, ReviewComf.class )) ;
                 }
             }
         });
@@ -240,6 +243,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 if(searchFlag) {
                     // POST data
                     putData("http://13.125.247.173/startend.php");
+                    startActivity( new Intent(MainActivity.this, ReviewSafe.class )) ;
                 }
             }
         });
@@ -294,14 +298,13 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     @Override
     public void onInit(int i) {
         len = content.length;
-        TTS_object = new TextToSpeech(this, this);
     }
 
     // 진동 알람 함수
     private void runVibrator(int time_vib){
         if(vibration) {
             for (int i = 0; i < time_vib; i++) {
-                vibrator.vibrate(1000);
+                vibrator.vibrate(500);
             }
         }
     }
@@ -360,9 +363,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             }
             @Override
             protected void onPostExecute(String result) {
-                // TODO: speak function 빠른길, 편한길, 안전한 길 구분.
+                // TODO: speak function 빠른길(1), 편한길(2), 안전한 길(3) 구분.
                 speak(1);
-                // runVibrator(1); // for test
+                runVibrator(1); // for test
             }
         }
         PutDataJSON g = new PutDataJSON();
