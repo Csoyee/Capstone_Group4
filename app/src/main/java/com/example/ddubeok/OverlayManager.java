@@ -37,17 +37,10 @@ public class OverlayManager extends NMapActivity {
     static NMapPOIdata cafePOI, ATMPOI, hospitalPOI, drugPOI, stationPOI, toiletPOI;
     static NMapPOIdataOverlay cafedataOverlay, ATMdataOverlay, hospitadataOverlay, drugdataOverlay, stationdataOverlay, toiletdataOverlay;
 
-    // 편의 시설 정보 가져오기
-    String myJSON;
-    JSONArray conv = null ;
-    ArrayList<HashMap<String, String >> convList = new ArrayList<HashMap<String, String>>() ;
-
     // 지도 위 오버레이 객체 드로잉에 필요한 리소스 데이터 제공 클래스
     public NMapResourceProvider mMapViewerResourceProvider;
     // 오버레이 객체 관리 클래스
     public NMapOverlayManager mOverlayManager;
-
-    Context temp;
 
     NMapController MapController;
 
@@ -166,10 +159,14 @@ public class OverlayManager extends NMapActivity {
             }
             @Override
             protected void onPostExecute(String result) {
+                String myJSON;
+
                 myJSON = result;
                 try {
+                    JSONArray conv = null ;
                     JSONObject jsonObj = new JSONObject(myJSON);
                     conv = jsonObj.getJSONArray("result");
+                    ArrayList<HashMap<String, String >> convList = new ArrayList<HashMap<String, String>>() ;
 
                     for (int i = 0; i < conv.length(); i++) {
                         JSONObject c = conv.getJSONObject(i);

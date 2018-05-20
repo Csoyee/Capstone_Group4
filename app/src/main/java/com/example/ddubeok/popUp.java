@@ -35,8 +35,8 @@ public class popUp extends Activity {
 
     /*
     String myJSON;
-    JSONArray conv = null;
-    ArrayList<HashMap<String, String>> convList = new ArrayList<HashMap<String, String>>();
+    JSONArray pathArray = null;
+    ArrayList<HashMap<String, String>> pathList = new ArrayList<HashMap<String, String>>();
 */
 
     @Override
@@ -59,7 +59,7 @@ public class popUp extends Activity {
 //        {
 //            getData("http://13.125.247.173/table.php");
 
-//            Toast.makeText(this, convList.get(0).get("latitude"), Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, pathList.get(0).get("latitude"), Toast.LENGTH_LONG).show();
 //        }
     }
 

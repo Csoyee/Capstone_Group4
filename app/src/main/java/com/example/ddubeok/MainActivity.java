@@ -18,14 +18,17 @@ import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class MainActivity extends NMapActivity implements TextToSpeech.OnInitListener{
@@ -86,7 +89,6 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //안내 멘트 리스트, 몇시 방향 안내는 추후 추가!
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -213,7 +215,13 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         Safe.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick (View view ) {
-                // dijkstra path from database table
+                searchFlag = true;
+                start_default = false;
+                EditText start = (EditText) findViewById(R.id.StartText);
+                EditText end = (EditText) findViewById(R.id.EndText);
+                start_node = start.getText().toString() ;
+                end_node = end.getText().toString() ;
+
                 if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
                     if (gpsManager.mMapLocationManager.isMyLocationEnabled()) {
                         mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
@@ -240,26 +248,16 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         // Path 함수 테스트
         overlayManager.testOverlayPath(8);
 
-        TTS_object = new TextToSpeech(this, this);
-
-        /* TODO: TTS 객체 리스트(혹은 array) 만들어 필요에 따라 객체 생성.
-        if(myTTS == null || !myTTS.isSpeaking()) {
-            myTTS = new TextToSpeech(this, this);
-        }
-        // TTS 주석 처리
-        */
     }
 
 
     private void MapViewSetting () {
-
         mMapView.setClickable(true);
         mMapView.setEnabled(true);
         mMapView.setFocusable(true);
         mMapView.setFocusableInTouchMode(true);
         mMapView.requestFocus();
         mMapView.setBuiltInZoomControls(true, null);
-
     }
 
     public void callConvMarker() {
@@ -295,9 +293,11 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
     @Override
     public void onInit(int i) {
-//      String fortest = "티티에스 테스트.";
+        len = content.length;
+        TTS_object = new TextToSpeech(this, this);
     }
 
+    // 진동 알람 함수
     private void runVibrator(int time_vib){
         if(vibration) {
             for (int i = 0; i < time_vib; i++) {
@@ -324,8 +324,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     JSONObject json = new JSONObject();
                     if (start_default) {
                         postParameters = postParameters+ "latitude="+gpsManager.mMapLocationManager.getMyLocation().getLatitude()
-                                + "& longtitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude()
-                        ;//+ "& startnode=NULL";
+                                + "& longtitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude();
                     } else {
                         postParameters = postParameters+"latitude=NULL& longtitude=NULL &";
                         postParameters = postParameters+"startnode="+start_node;
@@ -346,8 +345,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     outputStream.close();
 
                     int responseStateus = conn.getResponseCode();
-                    Log.e("TAG", "POST response code-" + responseStateus);
-
+                   // Log.e("TAG", "POST response code-" + responseStateus);
 
                 } catch (Throwable t) {
                     Toast.makeText(MainActivity.this, "Request failed:" + t.toString(), Toast.LENGTH_LONG).show();
@@ -355,7 +353,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     if (conn != null) {
                         conn.disconnect();
                     } else {
-                        Log.e("Connetction", "Failed");
+                        Log.e("Connection", "Failed");
                     }
                 }
                 return null;
@@ -370,4 +368,58 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         PutDataJSON g = new PutDataJSON();
         g.execute(url);
     }
+
+    String myJSON;
+    JSONArray pathArray = null ;
+    ArrayList<HashMap<String, String >> pathList = new ArrayList<HashMap<String, String>>() ;
+
+    public void getPathData ( String url ) {
+        class GetDataJSON extends AsyncTask<String, Void, String> {
+            @Override
+            protected String doInBackground(String... params) {
+
+                String uri = params[0];
+
+                BufferedReader bufferedReader = null;
+                try {
+                    URL url = new URL(uri);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    StringBuilder sb = new StringBuilder();
+
+                    bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+                    String json;
+                    while ((json = bufferedReader.readLine()) != null) {
+                        sb.append(json + "\n");
+                    }
+                    return sb.toString().trim();
+
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+            @Override
+            protected void onPostExecute(String result) {
+                myJSON = result;
+                try {
+                    JSONObject jsonObj = new JSONObject(myJSON);
+                    pathArray = jsonObj.getJSONArray("result");
+
+                    for (int i = 0; i < pathArray.length(); i++) {
+                        JSONObject c = pathArray.getJSONObject(i);
+                        HashMap<String, String> path = new HashMap<String, String>();
+                        path.put("latitude", c.getString("latitude"));
+                        path.put("longtitude", c.getString("longtitude"));
+                        path.put("angle", c.getString("angle"));
+                        pathList.add(path);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        GetDataJSON g = new GetDataJSON();
+        g.execute(url);
+    }
+
 }
