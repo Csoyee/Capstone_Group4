@@ -172,7 +172,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
                 if(searchFlag) {
                     // POST data
-                    putData("http://13.125.247.173/startend.php");
+                    putData("http://13.125.247.173/callPath.php");
                 }
             }
         });
@@ -327,9 +327,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     JSONObject json = new JSONObject();
                     if (start_default) {
                         postParameters = postParameters+ "latitude="+gpsManager.mMapLocationManager.getMyLocation().getLatitude()
-                                + "& longtitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude();
+                                + "& longitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude();
                     } else {
-                        postParameters = postParameters+"latitude=NULL& longtitude=NULL &";
+                        postParameters = postParameters+"latitude=NULL& longitude=NULL &";
                         postParameters = postParameters+"startnode="+start_node;
                     }
                     postParameters=postParameters+"& endnode="+end_node;
@@ -412,7 +412,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                         JSONObject c = pathArray.getJSONObject(i);
                         HashMap<String, String> path = new HashMap<String, String>();
                         path.put("latitude", c.getString("latitude"));
-                        path.put("longtitude", c.getString("longtitude"));
+                        path.put("longitude", c.getString("longitude"));
                         path.put("angle", c.getString("angle"));
                         pathList.add(path);
                     }
