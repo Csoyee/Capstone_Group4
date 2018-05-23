@@ -173,6 +173,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 if(searchFlag) {
                     // POST data
                     putData("http://13.125.247.173/startend.php");
+                    // Test
                 }
             }
         });
