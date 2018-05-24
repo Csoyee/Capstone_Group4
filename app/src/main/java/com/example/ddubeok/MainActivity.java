@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -33,7 +34,16 @@ import java.util.HashMap;
 
 public class MainActivity extends NMapActivity implements TextToSpeech.OnInitListener{
 
-    public static  final String API_KEY = "9__1zOI_pMvk5HpCOOGY"; // Client ID: client ID 맞게 수정해주세요!
+    public static final String API_KEY = "9__1zOI_pMvk5HpCOOGY"; // Client ID: client ID 맞게 수정해주세요!
+    public static final String SERVER_URL = "http://13.125.247.173/controlPath.php";
+    private static String TAG = "MainActivity";
+    private static final String TAG_JSON="coordinate";
+    private static final String TAG_ID = "id";
+    private static final String TAG_LATITUDE = "latitude";
+    private static final String TAG_LONGITUDE ="longitude";
+
+    ArrayList<HashMap<String, String >> pathList = new ArrayList<HashMap<String, String>>() ;
+    String mJsonString;
 
     NMapView mMapView;
     NMapController mMapController;
@@ -47,11 +57,13 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     public static boolean cafe = false;
     public static boolean hospital = false;
     public static boolean station = false;
+
     public static boolean ATM = false;
     public static boolean toilet = false;
 
     public static boolean sound = true;
     public static boolean vibration = true;
+
 
     TextToSpeech TTS_object ;
     Vibrator vibrator ;
@@ -171,9 +183,11 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 }
 
                 if(searchFlag) {
-                    // POST data
-                    putData("http://13.125.247.173/startend.php");
-                    // Test
+                    // post Data and get Data
+                    controlData(SERVER_URL);
+
+                    // send Path data to server
+
                 }
             }
         });
@@ -209,7 +223,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
                 if(searchFlag) {
                     // POST data
-                    putData("http://13.125.247.173/startend.php");
+                    controlData(SERVER_URL);
                     startActivity( new Intent(MainActivity.this, ReviewComf.class )) ;
                 }
             }
@@ -243,15 +257,13 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
                 if(searchFlag) {
                     // POST data
-                    putData("http://13.125.247.173/startend.php");
+                    controlData(SERVER_URL);
                     startActivity( new Intent(MainActivity.this, ReviewSafe.class )) ;
                 }
             }
         });
 
-      //  overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
-        // Path 함수 테스트
-        overlayManager.testOverlayPath(8);
+        // overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
 
     }
 
@@ -316,8 +328,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         }
     }
 
-    public void putData ( String url ) {
-        class PutDataJSON extends AsyncTask<String, Void, String> {
+    public void controlData(String url ) {
+        class ControlJsonData extends AsyncTask<String, Void, String> {
             @Override
             protected String doInBackground(String... params) {
                 String uri = params[0];
@@ -328,9 +340,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     JSONObject json = new JSONObject();
                     if (start_default) {
                         postParameters = postParameters+ "latitude="+gpsManager.mMapLocationManager.getMyLocation().getLatitude()
-                                + "& longtitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude();
+                                + "& longitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude();
                     } else {
-                        postParameters = postParameters+"latitude=NULL& longtitude=NULL &";
+                        postParameters = postParameters+"latitude=NULL& longitude=NULL &";
                         postParameters = postParameters+"startnode="+start_node;
                     }
                     postParameters=postParameters+"& endnode="+end_node;
@@ -348,11 +360,131 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     outputStream.flush();
                     outputStream.close();
 
-                    int responseStateus = conn.getResponseCode();
-                   // Log.e("TAG", "POST response code-" + responseStateus);
 
-                } catch (Throwable t) {
-                    Toast.makeText(MainActivity.this, "Request failed:" + t.toString(), Toast.LENGTH_LONG).show();
+
+                    int responseStatusCode = conn.getResponseCode();
+                    Log.d(TAG, "POST response code - " + responseStatusCode);
+
+                    InputStream inputStream;
+                    if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                        inputStream = conn.getInputStream();
+                    }
+                    else{
+                        inputStream = conn.getErrorStream();
+                    }
+
+
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+                    while((line = bufferedReader.readLine()) != null){
+                        sb.append(line);
+                    }
+
+                    bufferedReader.close();
+
+                    // get pathList from server
+                    mJsonString = sb.toString();
+                    pathList = getData();
+
+                    return sb.toString();
+                } catch (Exception e) {
+                    Log.d(TAG, "InsertData: Error ", e);
+                    return new String("Error: " + e.getMessage());
+                } finally {
+                    if (conn != null) {
+                        conn.disconnect();
+                    } else {
+                        Log.e("Connection", "Failed");
+                    }
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                speak(1);
+                runVibrator(1);
+                super.onPostExecute(s);
+                Log.d(TAG, "response  - " + s);
+
+                // TODO: speak function 빠른길(1), 편한길(2), 안전한 길(3) 구분.
+                //Toast.makeText(MainActivity.this,"size :"+pathList.size(), Toast.LENGTH_LONG).show();
+                // overlay test 오버레이 그리기
+                overlayManager.testOverlayPath(pathList);
+            }
+
+            private ArrayList<HashMap<String, String >> getData(){
+                ArrayList<HashMap<String, String >> path = new ArrayList<HashMap<String, String>>() ;
+                try{
+                    JSONObject jsonObject = new JSONObject(mJsonString);
+                    JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+                    for(int i=0;i<jsonArray.length();i++){
+
+                        JSONObject item = jsonArray.getJSONObject(i);
+
+                        String id = item.getString(TAG_ID);
+                        String latitude = item.getString(TAG_LATITUDE);
+                        String longitude = item.getString(TAG_LONGITUDE);
+
+                        HashMap<String,String> hashMap = new HashMap<>();
+
+                        hashMap.put(TAG_ID, id);
+                        hashMap.put(TAG_LATITUDE, latitude);
+                        hashMap.put(TAG_LONGITUDE, longitude);
+
+                        path.add(hashMap);
+
+                    }
+                }catch(JSONException e){
+                    Log.d(TAG, "showResult : ", e);
+                }
+                return path;
+            }
+        }
+
+        ControlJsonData g = new ControlJsonData();
+        g.execute(url);
+    }
+
+
+
+    public void pathSendingTest(String url ) {
+        class PathSending extends AsyncTask<String, Void, String> {
+            //sample path list
+            ArrayList<HashMap<String, String >> pathfortest = new ArrayList<HashMap<String, String>>() ;
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                makesampleData();
+                String uri = params[0];
+                HttpURLConnection conn=null;
+                String postQuery = "";
+                try {
+                    URL url = new URL(uri);
+                    JSONObject json = new JSONObject();
+                    postQuery = putData();
+
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000);
+                    conn.setConnectTimeout(15000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoOutput(true);
+
+                    //TODO: how to send multiple row?
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postQuery.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    int responseStatusCode = conn.getResponseCode();
+                    Log.e(TAG, "POST response code - " + responseStatusCode);
+                } catch (Exception e) {
+                    Log.e(TAG, "sendData: Error ", e);
                 } finally {
                     if (conn != null) {
                         conn.disconnect();
@@ -363,67 +495,50 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 return null;
             }
             @Override
-            protected void onPostExecute(String result) {
-                // TODO: speak function 빠른길(1), 편한길(2), 안전한 길(3) 구분.
-                speak(1);
-                runVibrator(1); // for test
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                Log.d(TAG, "response  - " + s);
+            }
+
+            private String putData(){
+                String postParameters ="";
+                int num = pathfortest.size();
+                for(int i=0 ; i < num ; i++){
+                    String latitude = pathfortest.get(i).get(TAG_LATITUDE);
+                    String longitude = pathfortest.get(i).get(TAG_LONGITUDE);
+                    postParameters = postParameters + "latitude="+latitude+" & longitude="+longitude ;
+                    Log.e("debugging,", postParameters);
+                }
+                return postParameters;
+            }
+
+            private void makesampleData() {
+
+                HashMap<String,String> hashMap = new HashMap<>();
+                hashMap.put(TAG_ID, "test");
+                hashMap.put(TAG_LATITUDE, "123213");
+                hashMap.put(TAG_LONGITUDE, "232132");
+
+                pathfortest.add(hashMap);
+
+                hashMap.clear();
+                hashMap.put(TAG_ID, "test2");
+                hashMap.put(TAG_LATITUDE, "213213");
+                hashMap.put(TAG_LONGITUDE, "123213");
+
+                pathfortest.add(hashMap);
+
+                hashMap.clear();
+                hashMap.put(TAG_ID, "test3");
+                hashMap.put(TAG_LATITUDE, "23213");
+                hashMap.put(TAG_LONGITUDE, "1412413");
+
+                pathfortest.add(hashMap);
             }
         }
-        PutDataJSON g = new PutDataJSON();
+
+        PathSending g = new PathSending();
+
         g.execute(url);
     }
-
-    String myJSON;
-    JSONArray pathArray = null ;
-    ArrayList<HashMap<String, String >> pathList = new ArrayList<HashMap<String, String>>() ;
-
-    public void getPathData ( String url ) {
-        class GetDataJSON extends AsyncTask<String, Void, String> {
-            @Override
-            protected String doInBackground(String... params) {
-
-                String uri = params[0];
-
-                BufferedReader bufferedReader = null;
-                try {
-                    URL url = new URL(uri);
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    StringBuilder sb = new StringBuilder();
-
-                    bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-                    String json;
-                    while ((json = bufferedReader.readLine()) != null) {
-                        sb.append(json + "\n");
-                    }
-                    return sb.toString().trim();
-
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-            @Override
-            protected void onPostExecute(String result) {
-                myJSON = result;
-                try {
-                    JSONObject jsonObj = new JSONObject(myJSON);
-                    pathArray = jsonObj.getJSONArray("result");
-
-                    for (int i = 0; i < pathArray.length(); i++) {
-                        JSONObject c = pathArray.getJSONObject(i);
-                        HashMap<String, String> path = new HashMap<String, String>();
-                        path.put("latitude", c.getString("latitude"));
-                        path.put("longtitude", c.getString("longtitude"));
-                        path.put("angle", c.getString("angle"));
-                        pathList.add(path);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        GetDataJSON g = new GetDataJSON();
-        g.execute(url);
-    }
-
 }

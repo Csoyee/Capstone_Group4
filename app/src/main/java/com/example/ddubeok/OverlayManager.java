@@ -65,8 +65,39 @@ public class OverlayManager extends NMapActivity {
         poIdataOverlay.showAllPOIdata(0);
     }
 
+    public void testOverlayPath (ArrayList<HashMap<String, String >> pathList) {
+        int node_num = pathList.size();
+        NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider) ;
+        poiData.beginPOIdata(2);
+        // 출발지, 도착지 설정
+        double start_latitude = Double.parseDouble(pathList.get(0).get("latitude"));
+        double start_longitude = Double.parseDouble(pathList.get(0).get("longitude"));
+        double end_latitude = Double.parseDouble(pathList.get(node_num-1).get("latitude"));
+        double end_longitude = Double.parseDouble(pathList.get(node_num-1).get("longitude"));
+        poiData.addPOIitem(start_longitude, start_latitude, "begin", NMapPOIflagType.FROM, 0) ;
+        poiData.addPOIitem(end_longitude, end_latitude, "end", NMapPOIflagType.TO, 0 );
+        poiData.endPOIdata();
+        // 출발지, 도착지 설정 완료
+
+        NMapPOIdataOverlay poIdataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
+        poIdataOverlay.showAllPOIdata(0);
+
+        NMapPathData pathData = new NMapPathData( node_num);
+        for(int i=0; i<node_num; i++){
+            double node_latitude = Double.parseDouble(pathList.get(i).get("latitude"));
+            double node_longitude = Double.parseDouble(pathList.get(i).get("longitude"));
+            pathData.addPathPoint(node_longitude, node_latitude, NMapPathLineStyle.TYPE_SOLID);
+        }
+        pathData.endPathData();
+        // draw path
+        NMapPathDataOverlay pathDataOverlay = mOverlayManager.createPathDataOverlay(pathData);
+
+    }
+
+    /*
     // TODO: 인자로 path list 넘겨줄 수 있도록!
-    public void testOverlayPath (int node_num) {
+    public void testOverlayPath (ArrayList<HashMap<String, String >> pathList) {
+        int node_num = pathList.size();
         NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider) ;
         poiData.beginPOIdata(2);
         // 출발지, 도착지 설정
@@ -76,9 +107,9 @@ public class OverlayManager extends NMapActivity {
 
         NMapPOIdataOverlay poIdataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
         poIdataOverlay.showAllPOIdata(0);
-      //  poIdataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
+        // poIdataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
 
-        NMapPathData pathData = new NMapPathData( node_num);
+        NMapPathData pathData = new NMapPathData( 8);
         pathData.addPathPoint(126.974422, 37.298920, NMapPathLineStyle.TYPE_SOLID);
         pathData.addPathPoint(126.974393, 37.298874, 0);
         pathData.addPathPoint(126.974190, 37.298921, 0);
@@ -91,8 +122,8 @@ public class OverlayManager extends NMapActivity {
         pathData.endPathData();
 
         NMapPathDataOverlay pathDataOverlay = mOverlayManager.createPathDataOverlay(pathData);
-
     }
+    */
 
     // array overlaymarker
     public void convMarker () {
