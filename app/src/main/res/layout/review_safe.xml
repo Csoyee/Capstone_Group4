@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
     android:background="#eeeeee"
     android:layout_height="wrap_content"
@@ -14,9 +16,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="53dp"
-            android:background="#ff7a00"
+            android:background="@android:color/darker_gray"
+            android:fontFamily="casual"
             android:gravity="center"
-            android:text="Notice"
+            android:text="안전하게 도착하셨나요?"
             android:textColor="#fff"
             android:textSize="20sp" />
     </LinearLayout>
@@ -24,18 +27,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/background_light"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="12dp">
 
-        <TextView
-            android:id="@+id/txtText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:alpha="0.87"
-            android:gravity="center"
-            android:textColor="#000"
-            android:textSize="15sp" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            app:srcCompat="@drawable/comfort" />
     </LinearLayout>
 
     <View
@@ -53,33 +55,33 @@
             android:id="@+id/Good"
             android:layout_width="100dp"
             android:layout_height="53dp"
-            android:background="#00000000"
+            android:background="@android:color/background_light"
             android:onClick="mOnGood"
             android:padding="13dp"
             android:text="좋았어요"
-            android:textColor="#ff7a00"
+            android:textColor="@android:color/background_dark"
             android:textSize="15sp" />
 
         <Button
             android:id="@+id/far"
             android:layout_width="100dp"
             android:layout_height="53dp"
-            android:background="#00000000"
+            android:background="@android:color/background_light"
             android:onClick="mOnFar"
             android:padding="13dp"
             android:text="돌아갔어요"
-            android:textColor="#ff7a00"
+            android:textColor="@android:color/background_dark"
             android:textSize="15sp" />
 
         <Button
             android:id="@+id/safe"
             android:layout_width="100dp"
             android:layout_height="53dp"
-            android:background="#00000000"
+            android:background="@android:color/background_light"
             android:onClick="mOnBad"
             android:padding="13dp"
             android:text="무서웠어요"
-            android:textColor="#ff7a00"
+            android:textColor="@android:color/background_dark"
             android:textSize="15sp" />
     </LinearLayout>
     <!--// 닫기 버튼 -->

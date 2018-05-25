@@ -75,7 +75,6 @@ public class popUp extends Activity {
 
     }
     public void mOnClose ( View v ) {
-
         MainActivity.sound = soundSwitch.isChecked();
         MainActivity.vibration = vibSwitch.isChecked();
         MainActivity.drugstore = drugStore.isChecked();
