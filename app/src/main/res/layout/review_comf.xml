@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="53dp"
-            android:background="@android:color/darker_gray"
+            android:background="@android:color/holo_orange_light"
             android:fontFamily="casual"
             android:gravity="center"
             android:text="편안한 보행길 되셨나요?"
@@ -35,7 +35,7 @@
             android:layout_height="70dp"
             android:layout_gravity="center"
             android:visibility="visible"
-            app:srcCompat="@drawable/comfort" />
+            android:src="@drawable/comfort" />
     </LinearLayout>
 
     <View
