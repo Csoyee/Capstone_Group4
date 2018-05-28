@@ -70,6 +70,11 @@ public class OverlayManager extends NMapActivity {
         NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider) ;
         poiData.beginPOIdata(2);
         // 출발지, 도착지 설정
+        if(node_num == 0) {
+            Log.e("ERROR", "There is no path");
+            return;
+        }
+
         double start_latitude = Double.parseDouble(pathList.get(0).get("latitude"));
         double start_longitude = Double.parseDouble(pathList.get(0).get("longitude"));
         double end_latitude = Double.parseDouble(pathList.get(node_num-1).get("latitude"));

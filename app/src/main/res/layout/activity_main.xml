@@ -17,6 +17,7 @@
         android:clickable="true"
         android:src="@drawable/newlocation"
         app:backgroundTint="@color/colorPrimaryDark"
+        app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -29,6 +30,7 @@
         android:clickable="true"
         android:src="@drawable/newsetting"
         app:backgroundTint="@color/colorPrimaryDark"
+        app:fabSize="mini"
         app:layout_constraintBottom_toTopOf="@+id/GPSbutton"
         app:layout_constraintEnd_toEndOf="parent" />
 
