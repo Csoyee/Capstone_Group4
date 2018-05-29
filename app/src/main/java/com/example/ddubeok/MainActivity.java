@@ -96,7 +96,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     //searching
     boolean searchFlag = true;
     boolean start_default = false;
-    String start_node, end_node;
+    String start_addr, end_addr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,10 +164,10 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 start_default = false;
                 EditText start = (EditText) findViewById(R.id.StartText);
                 EditText end = (EditText) findViewById(R.id.EndText);
-                start_node = start.getText().toString() ;
-                end_node = end.getText().toString() ;
+                start_addr = start.getText().toString() ;
+                end_addr = end.getText().toString() ;
 
-                if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
+                if((start_addr.length() == 0) || (start_addr.equals("내 위치"))) {
                     if (gpsManager.mMapLocationManager.isMyLocationEnabled()) {
                         mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
                         start_default = true;
@@ -176,18 +176,17 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                         searchFlag = false;
                     }
                 }
-                if(searchFlag && (end_node.length() == 0) ) {
+                if(searchFlag && (end_addr.length() == 0) ) {
                     Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
                     speak(0);
                     searchFlag = false ;
                 }
 
                 if(searchFlag) {
+                    // 지도 위 오버레이 모두 제거
+
                     // post Data and get Data
                     controlData(SERVER_URL);
-
-                    // send Path data to server
-
                 }
             }
         });
@@ -200,13 +199,13 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 start_default = false;
                 EditText start = (EditText) findViewById(R.id.StartText);
                 EditText end = (EditText) findViewById(R.id.EndText);
-                start_node ="";
-                end_node = "";
-                start_node = start.getText().toString() ;
-                end_node = end.getText().toString() ;
+                start_addr ="";
+                end_addr = "";
+                start_addr = start.getText().toString() ;
+                end_addr = end.getText().toString() ;
 
 
-                if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
+                if((start_addr.length() == 0) || (start_addr.equals("내 위치"))) {
                     if (gpsManager.mMapLocationManager.isMyLocationEnabled()) {
                         mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
                         start_default = true;
@@ -215,7 +214,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                         searchFlag = false;
                     }
                 }
-                if(searchFlag && (end_node.length() == 0) ) {
+                if(searchFlag && (end_addr.length() == 0) ) {
                     Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
                     speak(0);
                     searchFlag = false ;
@@ -237,10 +236,10 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 start_default = false;
                 EditText start = (EditText) findViewById(R.id.StartText);
                 EditText end = (EditText) findViewById(R.id.EndText);
-                start_node = start.getText().toString() ;
-                end_node = end.getText().toString() ;
+                start_addr = start.getText().toString() ;
+                end_addr = end.getText().toString() ;
 
-                if((start_node.length() == 0) || (start_node.equals("내 위치"))) {
+                if((start_addr.length() == 0) || (start_addr.equals("내 위치"))) {
                     if (gpsManager.mMapLocationManager.isMyLocationEnabled()) {
                         mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
                         start_default = true;
@@ -249,7 +248,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                         searchFlag = false;
                     }
                 }
-                if(searchFlag && (end_node.length() == 0) ) {
+                if(searchFlag && (end_addr.length() == 0) ) {
                     Toast.makeText(MainActivity.this, "도착지를 입력해주세요.", Toast.LENGTH_LONG).show();
                     speak(0);
                     searchFlag = false ;
@@ -343,10 +342,10 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                         postParameters = postParameters+ "latitude="+gpsManager.mMapLocationManager.getMyLocation().getLatitude()
                                 + "& longitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude();
                     } else {
-                        postParameters = postParameters+"latitude=NULL& longitude=NULL &";
-                        postParameters = postParameters+"startnode="+start_node;
+                        //postParameters = postParameters+"latitude=NULL& longitude=NULL &";
+                        postParameters = postParameters+"startaddr="+ start_addr;
                     }
-                    postParameters=postParameters+"& endnode="+end_node;
+                    postParameters=postParameters+"& endaddr="+ end_addr;
 
                     speak(3);
                     conn = (HttpURLConnection) url.openConnection();
@@ -414,7 +413,12 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 // TODO: speak function 빠른길(1), 편한길(2), 안전한 길(3) 구분.
                 //Toast.makeText(MainActivity.this,"size :"+pathList.size(), Toast.LENGTH_LONG).show();
                 // overlay test 오버레이 그리기
-                overlayManager.testOverlayPath(pathList);
+                if(pathList.size() == 0){ // 전송된 path가 하나도 없을 경우
+                    //Toast.makeText(MainActivity.this,"size :"+pathList.size(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this,"출발지와 도착지를 다시 확인해주세요.", Toast.LENGTH_LONG).show();
+                }else {
+                    overlayManager.testOverlayPath(pathList);
+                }
             }
 
             private ArrayList<HashMap<String, String >> getData(){
