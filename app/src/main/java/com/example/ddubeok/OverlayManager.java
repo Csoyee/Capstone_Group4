@@ -268,7 +268,7 @@ public class OverlayManager extends NMapActivity {
                         cafePOI.endPOIdata();
 
                         if (MainActivity.cafe) {
-                            if(cafedataOverlay != null) {
+                            if(cafedataOverlay != null && cafedataOverlay.size() != 0) {
                                 cafedataOverlay.removeAllPOIdata();
                             }
                             if(cafePOI != null) {

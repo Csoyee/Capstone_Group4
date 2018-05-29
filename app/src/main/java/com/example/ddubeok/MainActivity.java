@@ -2,6 +2,7 @@ package com.example.ddubeok;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
@@ -263,7 +264,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             }
         });
 
-        // overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
+//         overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
 
     }
 
