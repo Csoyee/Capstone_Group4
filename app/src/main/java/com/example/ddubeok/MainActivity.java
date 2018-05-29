@@ -37,10 +37,11 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     public static final String API_KEY = "9__1zOI_pMvk5HpCOOGY"; // Client ID: client ID 맞게 수정해주세요!
     public static final String SERVER_URL = "http://13.125.247.173/controlPath.php";
     private static String TAG = "MainActivity";
-    private static final String TAG_JSON="coordinate";
+    private static final String TAG_JSON="pathInfo";
     private static final String TAG_ID = "id";
     private static final String TAG_LATITUDE = "latitude";
     private static final String TAG_LONGITUDE ="longitude";
+    private static final String TAG_ANGLE ="angle";
 
     ArrayList<HashMap<String, String >> pathList = new ArrayList<HashMap<String, String>>() ;
     String mJsonString;
@@ -434,12 +435,14 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                         String id = item.getString(TAG_ID);
                         String latitude = item.getString(TAG_LATITUDE);
                         String longitude = item.getString(TAG_LONGITUDE);
+                        String angle = item.getString(TAG_ANGLE);
 
                         HashMap<String,String> hashMap = new HashMap<>();
 
                         hashMap.put(TAG_ID, id);
                         hashMap.put(TAG_LATITUDE, latitude);
                         hashMap.put(TAG_LONGITUDE, longitude);
+                        hashMap.put(TAG_ANGLE, angle);
 
                         path.add(hashMap);
 
