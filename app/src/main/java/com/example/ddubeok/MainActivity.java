@@ -184,8 +184,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 }
 
                 if(searchFlag) {
-                    // 지도 위 오버레이 모두 제거
-
+                    // 지도 위 오버레이 모두 제거하기
+                    overlayManager.clearOverlayPath();
                     // post Data and get Data
                     controlData(SERVER_URL);
                 }
