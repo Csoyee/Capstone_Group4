@@ -1,7 +1,9 @@
 package com.example.ddubeok;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 
 import com.nhn.android.maps.NMapActivity;
@@ -279,7 +281,7 @@ public class OverlayManager extends NMapActivity {
                         }
 
                         if (MainActivity.toilet) {
-                            if(toiletdataOverlay != null) {
+                            if(toiletdataOverlay != null && toiletdataOverlay.size() != 0) {
                                 toiletdataOverlay.removeAllPOIdata();
                             }
                             if(toiletPOI != null) {
@@ -292,7 +294,7 @@ public class OverlayManager extends NMapActivity {
                         }
 
                         if (MainActivity.ATM) {
-                            if(ATMdataOverlay != null) {
+                            if(ATMdataOverlay != null && ATMdataOverlay.size() != 0) {
                                 ATMdataOverlay.removeAllPOIdata();
                             }
                             if(ATMPOI != null) {
@@ -304,7 +306,7 @@ public class OverlayManager extends NMapActivity {
                         }
 
                         if (MainActivity.station) {
-                            if(stationdataOverlay != null) {
+                            if(stationdataOverlay != null && stationdataOverlay.size() != 0) {
                                 stationdataOverlay.removeAllPOIdata();
                             }
                             if (stationPOI != null) {
@@ -317,7 +319,7 @@ public class OverlayManager extends NMapActivity {
 
 
                         if (MainActivity.hospital) {
-                            if(hospitadataOverlay != null) {
+                            if(hospitadataOverlay != null && hospitadataOverlay.size() != 0 ) {
                                 hospitadataOverlay.removeAllPOIdata();
                             }
                             if (hospitalPOI != null) {
@@ -330,7 +332,7 @@ public class OverlayManager extends NMapActivity {
                         }
 
                         if (MainActivity.drugstore){
-                            if(drugdataOverlay != null) {
+                            if(drugdataOverlay != null && drugdataOverlay.size() != 0) {
                                 drugdataOverlay.removeAllPOIdata();
                             }
                             if(drugPOI != null) {
