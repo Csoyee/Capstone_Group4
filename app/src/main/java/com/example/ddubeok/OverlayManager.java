@@ -67,6 +67,11 @@ public class OverlayManager extends NMapActivity {
         poIdataOverlay.showAllPOIdata(0);
     }
 
+    // 지도 위의 모든 오버레이를 제거하는 함수
+    public void clearOverlayPath(){
+        mOverlayManager.clearOverlays();
+    }
+
     public void testOverlayPath (ArrayList<HashMap<String, String >> pathList) {
         int node_num = pathList.size();
         NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider) ;
@@ -90,6 +95,7 @@ public class OverlayManager extends NMapActivity {
         poIdataOverlay.showAllPOIdata(0);
 
         NMapPathData pathData = new NMapPathData( node_num);
+        pathData.initPathData();
         for(int i=0; i<node_num; i++){
             double node_latitude = Double.parseDouble(pathList.get(i).get("latitude"));
             double node_longitude = Double.parseDouble(pathList.get(i).get("longitude"));

@@ -38,10 +38,13 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     public static final String API_KEY = "9__1zOI_pMvk5HpCOOGY"; // Client ID: client ID 맞게 수정해주세요!
     public static final String SERVER_URL = "http://13.125.247.173/controlPath.php";
     private static String TAG = "MainActivity";
-    private static final String TAG_JSON="coordinate";
+    private static final String TAG_PATHARR ="pathInfo";
+    private static final String TAG_FLAGARR ="flagInfo";
     private static final String TAG_ID = "id";
     private static final String TAG_LATITUDE = "latitude";
     private static final String TAG_LONGITUDE ="longitude";
+    private static final String TAG_ANGLE ="angle";
+    private static final String TAG_FLAG ="flag";
 
     ArrayList<HashMap<String, String >> pathList = new ArrayList<HashMap<String, String>>() ;
     String mJsonString;
@@ -71,9 +74,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     // TODO: content 확정,
     String content[] ={
             "도착지를 입력해주세요",
-            "빠른 길로 경로 안내를 시작합니다",
-            "편안한 길로 경로 안내를 시작합니다",
-            "안전한 길로 경로 안내를 시작합니다",
+            "빠른길로 경로 안내를 시작합니다",
+            "편안한길로 경로 안내를 시작합니다",
+            "안전한길로 경로 안내를 시작합니다",
             "목적지 부근입니다",
             "목적지에 도착하였습니다, 안내를 종료합니다",
             "경로를 이탈 하였습니다",
@@ -98,6 +101,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     boolean searchFlag = true;
     boolean start_default = false;
     String start_addr, end_addr;
+    int path_flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,8 +188,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 }
 
                 if(searchFlag) {
-                    // 지도 위 오버레이 모두 제거
-
+                    // 지도 위 오버레이 모두 제거하기
+                    overlayManager.clearOverlayPath();
                     // post Data and get Data
                     controlData(SERVER_URL);
                 }
@@ -389,7 +393,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
                     // get pathList from server
                     mJsonString = sb.toString();
-                    pathList = getData();
+                    pathList = getPathData();
+                    path_flag = getFlagData();
 
                     return sb.toString();
                 } catch (Exception e) {
@@ -413,42 +418,63 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
                 // TODO: speak function 빠른길(1), 편한길(2), 안전한 길(3) 구분.
                 //Toast.makeText(MainActivity.this,"size :"+pathList.size(), Toast.LENGTH_LONG).show();
-                // overlay test 오버레이 그리기
-                if(pathList.size() == 0){ // 전송된 path가 하나도 없을 경우
+
+                if(path_flag == 0){ // 0 : 시작과 끝 정상적으로 존재 및 연결
                     //Toast.makeText(MainActivity.this,"size :"+pathList.size(), Toast.LENGTH_LONG).show();
-                    Toast.makeText(MainActivity.this,"출발지와 도착지를 다시 확인해주세요.", Toast.LENGTH_LONG).show();
-                }else {
+                    // overlay test 오버레이 그리기
                     overlayManager.testOverlayPath(pathList);
+                }else if(path_flag == 1){ // 1 : 시작 노드와 도착 노드 둘다 일치하는 노드가 서버에 없음
+                    Toast.makeText(MainActivity.this,"Error Code : "+path_flag+", 시작 노드와 도착 노드 둘다 일치하는 노드가 서버에 없음.", Toast.LENGTH_LONG).show();
+                }else if(path_flag == 2){ // 2 : 시작 노드와 일치하는 노드가 서버에 없음
+                    Toast.makeText(MainActivity.this,"Error Code : "+path_flag+", 시작 노드와 일치하는 노드가 서버에 없음.", Toast.LENGTH_LONG).show();
+                }else if(path_flag == 3){ // 3 : 도착 노드와 일치하는 노드가 서버에 없음
+                    Toast.makeText(MainActivity.this,"Error Code : "+path_flag+", 도착 노드와 일치하는 노드가 서버에 없음.", Toast.LENGTH_LONG).show();
+                }else if(path_flag == 4){ // 4 : 시작 노드와 도착 노드 사이 연결이 안되어 있음
+                    Toast.makeText(MainActivity.this,"Error Code : "+path_flag+", 시작 노드와 도착 노드 사이 연결이 안되어 있음.", Toast.LENGTH_LONG).show();
                 }
             }
 
-            private ArrayList<HashMap<String, String >> getData(){
+            private ArrayList<HashMap<String, String >> getPathData(){
                 ArrayList<HashMap<String, String >> path = new ArrayList<HashMap<String, String>>() ;
                 try{
                     JSONObject jsonObject = new JSONObject(mJsonString);
-                    JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+                    JSONArray jsonArray = jsonObject.getJSONArray(TAG_PATHARR);
 
                     for(int i=0;i<jsonArray.length();i++){
-
                         JSONObject item = jsonArray.getJSONObject(i);
 
                         String id = item.getString(TAG_ID);
                         String latitude = item.getString(TAG_LATITUDE);
                         String longitude = item.getString(TAG_LONGITUDE);
+                        String angle = item.getString(TAG_ANGLE);
 
-                        HashMap<String,String> hashMap = new HashMap<>();
+                        HashMap<String, String> hashMap = new HashMap<>();
 
                         hashMap.put(TAG_ID, id);
                         hashMap.put(TAG_LATITUDE, latitude);
                         hashMap.put(TAG_LONGITUDE, longitude);
+                        hashMap.put(TAG_ANGLE, angle);
 
                         path.add(hashMap);
-
                     }
                 }catch(JSONException e){
                     Log.d(TAG, "showResult : ", e);
                 }
                 return path;
+            }
+
+            private int getFlagData(){
+                int flag = 0;
+                try{
+                    JSONObject jsonObject = new JSONObject(mJsonString);
+                    JSONArray jsonArray = jsonObject.getJSONArray(TAG_FLAGARR);
+                    JSONObject item_f = jsonArray.getJSONObject(0);
+                    flag = item_f.getInt(TAG_FLAG);
+
+                }catch(JSONException e){
+                    Log.d(TAG, "showResult : ", e);
+                }
+                return flag;
             }
         }
 
