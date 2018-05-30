@@ -173,7 +173,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 end_addr = end.getText().toString() ;
 
                 if((start_addr.length() == 0) || (start_addr.equals("내 위치"))) {
-                    if (gpsManager.mMapLocationManager.isMyLocationEnabled()) {
+                    if (gpsManager.mMapLocationManager.isMyLocationFixed()) {
                         mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
                         start_default = true;
                     } else {
@@ -211,7 +211,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
 
                 if((start_addr.length() == 0) || (start_addr.equals("내 위치"))) {
-                    if (gpsManager.mMapLocationManager.isMyLocationEnabled()) {
+                    if (gpsManager.mMapLocationManager.isMyLocationFixed()) {
                         mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
                         start_default = true;
                     } else {
@@ -245,7 +245,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 end_addr = end.getText().toString() ;
 
                 if((start_addr.length() == 0) || (start_addr.equals("내 위치"))) {
-                    if (gpsManager.mMapLocationManager.isMyLocationEnabled()) {
+                    if (gpsManager.mMapLocationManager.isMyLocationFixed()) {
                         mMapController.animateTo(gpsManager.mMapLocationManager.getMyLocation());
                         start_default = true;
                     } else {

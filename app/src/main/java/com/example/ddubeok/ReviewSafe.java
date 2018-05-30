@@ -33,6 +33,7 @@ public class ReviewSafe extends Activity {
 
     public void mOnGood ( View v ) {
         Log.e("debugging: ", "Click Good");
+        pathSendingTest("http://13.125.247.173/getReview.php");
         finish();
     }
 
@@ -57,7 +58,7 @@ public class ReviewSafe extends Activity {
         return true;
     }
 
-    public void pathSendingTest(String url ) {
+    private void pathSendingTest(String url ) {
         class PathSending extends AsyncTask<String, Void, String> {
             //sample path list
             ArrayList<HashMap<String, String >> pathfortest = new ArrayList<HashMap<String, String>>() ;
@@ -80,7 +81,6 @@ public class ReviewSafe extends Activity {
                     conn.setRequestMethod("POST");
                     conn.setDoOutput(true);
 
-                    //TODO: how to send multiple row?
                     OutputStream outputStream = conn.getOutputStream();
                     outputStream.write(postQuery.getBytes("UTF-8"));
                     outputStream.flush();
@@ -108,12 +108,19 @@ public class ReviewSafe extends Activity {
             private String putData(){
                 String postParameters ="";
                 int num = pathfortest.size();
-                for(int i=0 ; i < num ; i++){
-                    String latitude = pathfortest.get(i).get(TAG_LATITUDE);
-                    String longitude = pathfortest.get(i).get(TAG_LONGITUDE);
-                    postParameters = postParameters + "latitude="+latitude+" & longitude="+longitude ;
-                    Log.e("debugging,", postParameters);
+
+                if (num == 0 ){
+                    Log.e("ERROR", "NODATA");
+                    return "";
                 }
+
+
+                // TODO: 어떤 평가 결과 였는지에 따라서 결과를 보내는 column 추가.
+                postParameters = postParameters + "start_latitude="+pathfortest.get(0).get(TAG_LATITUDE)
+                                                +" & start_longtitude="  + pathfortest.get(0).get(TAG_LONGITUDE)
+                                                + "& end_latitude=" + pathfortest.get(num - 1).get(TAG_LATITUDE)
+                                                + "& end_longtitude= " + pathfortest.get(num - 1).get(TAG_LONGITUDE);
+                Log.e("debugging,", postParameters + num);
                 return postParameters;
             }
 
@@ -121,22 +128,24 @@ public class ReviewSafe extends Activity {
 
                 HashMap<String,String> hashMap = new HashMap<>();
                 hashMap.put(TAG_ID, "test");
-                hashMap.put(TAG_LATITUDE, "123213");
-                hashMap.put(TAG_LONGITUDE, "232132");
+                hashMap.put(TAG_LATITUDE, "12321.3");
+                hashMap.put(TAG_LONGITUDE, "2321.32");
 
                 pathfortest.add(hashMap);
 
-                hashMap.clear();
+                hashMap = new HashMap<>();
+
                 hashMap.put(TAG_ID, "test2");
-                hashMap.put(TAG_LATITUDE, "213213");
-                hashMap.put(TAG_LONGITUDE, "123213");
+                hashMap.put(TAG_LATITUDE, "21321.3");
+                hashMap.put(TAG_LONGITUDE, "1232.13");
 
                 pathfortest.add(hashMap);
 
-                hashMap.clear();
+                hashMap = new HashMap<>();
+
                 hashMap.put(TAG_ID, "test3");
-                hashMap.put(TAG_LATITUDE, "23213");
-                hashMap.put(TAG_LONGITUDE, "1412413");
+                hashMap.put(TAG_LATITUDE, "23.213");
+                hashMap.put(TAG_LONGITUDE, "14.12413");
 
                 pathfortest.add(hashMap);
             }

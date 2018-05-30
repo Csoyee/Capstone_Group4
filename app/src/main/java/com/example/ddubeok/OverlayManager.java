@@ -39,6 +39,8 @@ public class OverlayManager extends NMapActivity {
     static NMapPOIdata cafePOI, ATMPOI, hospitalPOI, drugPOI, stationPOI, toiletPOI;
     static NMapPOIdataOverlay cafedataOverlay, ATMdataOverlay, hospitadataOverlay, drugdataOverlay, stationdataOverlay, toiletdataOverlay;
 
+    static Drawable fortest;
+
     // 지도 위 오버레이 객체 드로잉에 필요한 리소스 데이터 제공 클래스
     public NMapResourceProvider mMapViewerResourceProvider;
     // 오버레이 객체 관리 클래스
@@ -114,42 +116,36 @@ public class OverlayManager extends NMapActivity {
 
         if (!MainActivity.cafe) {
             if(cafePOI != null) {
-                cafePOI.removeAllPOIdata();
-                cafedataOverlay.removeAllPOIdata();
+                mOverlayManager.removeOverlay(cafedataOverlay);
             }
         }
 
         if (!MainActivity.ATM) {
             if (ATMPOI != null) {
-                ATMPOI.removeAllPOIdata();
-                ATMdataOverlay.removeAllPOIdata();
+                mOverlayManager.removeOverlay(ATMdataOverlay);
             }
         }
         if (!MainActivity.station) {
             if (stationPOI != null) {
-                stationPOI.removeAllPOIdata();
-                stationdataOverlay.removeAllPOIdata();
+                mOverlayManager.removeOverlay(stationdataOverlay);
             }
         }
 
         if (!MainActivity.toilet) {
             if (toiletPOI != null) {
-                toiletPOI.removeAllPOIdata();
-                toiletdataOverlay.removeAllPOIdata();
+                mOverlayManager.removeOverlay(toiletdataOverlay);
             }
         }
 
         if (!MainActivity.hospital) {
             if (hospitalPOI != null) {
-                hospitalPOI.removeAllPOIdata();
-                hospitadataOverlay.removeAllPOIdata();
+                mOverlayManager.removeOverlay(hospitadataOverlay);
             }
         }
 
         if (!MainActivity.drugstore) {
             if (drugPOI != null) {
-                drugPOI.removeAllPOIdata();
-                drugdataOverlay.removeAllPOIdata();
+                mOverlayManager.removeOverlay(drugdataOverlay);
             }
         }
     }
@@ -235,32 +231,29 @@ public class OverlayManager extends NMapActivity {
                             if ( convList.get(i).get("type").equals("cafe") ) {
                                 if(MainActivity.cafe) {
                                     item = cafePOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
-                                    item.setRightButton(true);
                                 }
                             } else if (convList.get(i).get("type").equals("drugstore")){
                                 if(MainActivity.drugstore) {
                                     item = drugPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
-                                    item.setRightButton(true);
                                 }
                             } else if (convList.get(i).get("type").equals("station")) {
                                 if(MainActivity.station) {
                                     item = stationPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
-                                    item.setRightButton(true);
                                 }
                             } else if (convList.get(i).get("type").equals("hospital")) {
                                 if(MainActivity.hospital) {
                                     item = hospitalPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
-                                    item.setRightButton(true);
+
                                 }
                             } else if (convList.get(i).get("type").equals("ATM")) {
                                 if(MainActivity.ATM) {
                                     item = ATMPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
-                                    item.setRightButton(true);
+
                                 }
                             } else if (convList.get(i).get("type").equals("toilet")) {
                                 if(MainActivity.toilet) {
                                     item = toiletPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
-                                    item.setRightButton(true);
+
                                 }
                             }
 
@@ -274,8 +267,8 @@ public class OverlayManager extends NMapActivity {
                         cafePOI.endPOIdata();
 
                         if (MainActivity.cafe) {
-                            if(cafedataOverlay != null && cafedataOverlay.size() != 0) {
-                                cafedataOverlay.removeAllPOIdata();
+                            if(cafedataOverlay != null) {
+                                mOverlayManager.removeOverlay(cafedataOverlay);
                             }
                             if(cafePOI != null) {
                                 cafedataOverlay = mOverlayManager.createPOIdataOverlay(cafePOI, null); // TODO: drawable image
@@ -287,8 +280,8 @@ public class OverlayManager extends NMapActivity {
                         }
 
                         if (MainActivity.toilet) {
-                            if(toiletdataOverlay != null && toiletdataOverlay.size() != 0) {
-                                toiletdataOverlay.removeAllPOIdata();
+                            if(toiletdataOverlay != null ) {
+                                mOverlayManager.removeOverlay(toiletdataOverlay);
                             }
                             if(toiletPOI != null) {
                                 toiletdataOverlay = mOverlayManager.createPOIdataOverlay(toiletPOI, null); // TODO: drawable image
@@ -300,10 +293,11 @@ public class OverlayManager extends NMapActivity {
                         }
 
                         if (MainActivity.ATM) {
-                            if(ATMdataOverlay != null && ATMdataOverlay.size() != 0) {
-                                ATMdataOverlay.removeAllPOIdata();
+                            if(ATMdataOverlay != null) {
+                                mOverlayManager.removeOverlay(ATMdataOverlay);
                             }
                             if(ATMPOI != null) {
+
                                 ATMdataOverlay = mOverlayManager.createPOIdataOverlay(ATMPOI, null); // TODO: drawable image
                                 if (ATMdataOverlay.size() > 0) {
                                     ATMdataOverlay.showAllPOIdata(0);
@@ -312,8 +306,8 @@ public class OverlayManager extends NMapActivity {
                         }
 
                         if (MainActivity.station) {
-                            if(stationdataOverlay != null && stationdataOverlay.size() != 0) {
-                                stationdataOverlay.removeAllPOIdata();
+                            if(stationdataOverlay != null ) {
+                                mOverlayManager.removeOverlay(stationdataOverlay);
                             }
                             if (stationPOI != null) {
                                 stationdataOverlay = mOverlayManager.createPOIdataOverlay(stationPOI, null); // TODO: drawable image
@@ -325,8 +319,8 @@ public class OverlayManager extends NMapActivity {
 
 
                         if (MainActivity.hospital) {
-                            if(hospitadataOverlay != null && hospitadataOverlay.size() != 0 ) {
-                                hospitadataOverlay.removeAllPOIdata();
+                            if(hospitadataOverlay != null ) {
+                                mOverlayManager.removeOverlay(hospitadataOverlay);
                             }
                             if (hospitalPOI != null) {
                                 hospitadataOverlay = mOverlayManager.createPOIdataOverlay(hospitalPOI, null); // TODO: drawable image
@@ -338,8 +332,8 @@ public class OverlayManager extends NMapActivity {
                         }
 
                         if (MainActivity.drugstore){
-                            if(drugdataOverlay != null && drugdataOverlay.size() != 0) {
-                                drugdataOverlay.removeAllPOIdata();
+                            if(drugdataOverlay != null ) {
+                                mOverlayManager.removeOverlay(drugdataOverlay);
                             }
                             if(drugPOI != null) {
                                 drugdataOverlay = mOverlayManager.createPOIdataOverlay(drugPOI, null); // TODO: drawable image
