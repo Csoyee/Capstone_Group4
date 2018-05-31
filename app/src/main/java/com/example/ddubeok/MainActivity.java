@@ -45,6 +45,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     private static final String TAG_LONGITUDE ="longitude";
     private static final String TAG_ANGLE ="angle";
     private static final String TAG_FLAG ="flag";
+    private static final String SEARCH_FAST = "1";
+    private static final String SEARCH_COMF = "2";
+    private static final String SEARCH_SAFE = "3";
 
     ArrayList<HashMap<String, String >> pathList = new ArrayList<HashMap<String, String>>() ;
     String mJsonString;
@@ -191,7 +194,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     // 지도 위 오버레이 모두 제거하기
                     overlayManager.clearOverlayPath();
                     // post Data and get Data
-                    controlData(SERVER_URL);
+                    controlData(SERVER_URL, SEARCH_FAST);
                 }
             }
         });
@@ -227,7 +230,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
                 if(searchFlag) {
                     // POST data
-                    //controlData(SERVER_URL);
+                    controlData(SERVER_URL, SEARCH_COMF);
                     startActivity( new Intent(MainActivity.this, ReviewComf.class )) ;
                 }
             }
@@ -261,7 +264,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
                 if(searchFlag) {
                     // POST data
-                    //controlData(SERVER_URL);
+                    controlData(SERVER_URL, SEARCH_SAFE);
                     startActivity( new Intent(MainActivity.this, ReviewSafe.class )) ;
                 }
             }
@@ -328,12 +331,13 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     }
 
     private void speak(int key){
+        Log.e("??", key+"??");
         if(sound) {
             TTS_object.speak(content[key], TextToSpeech.QUEUE_FLUSH, null, null);
         }
     }
 
-    public void controlData(String url ) {
+    public void controlData(String url , final String search_flag) {
         class ControlJsonData extends AsyncTask<String, Void, String> {
             @Override
             protected String doInBackground(String... params) {
@@ -351,21 +355,17 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                         postParameters = postParameters+"startaddr="+ start_addr;
                     }
                     postParameters=postParameters+"& endaddr="+ end_addr;
-
-                    speak(3);
+                    
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setReadTimeout(10000);
                     conn.setConnectTimeout(15000);
                     conn.setRequestMethod("POST");
                     conn.setDoOutput(true);
 
-                    speak(4);
                     OutputStream outputStream = conn.getOutputStream();
                     outputStream.write(postParameters.getBytes("UTF-8"));
                     outputStream.flush();
                     outputStream.close();
-
-
 
                     int responseStatusCode = conn.getResponseCode();
                     Log.d(TAG, "POST response code - " + responseStatusCode);
@@ -411,12 +411,17 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
             @Override
             protected void onPostExecute(String s) {
-                speak(1);
-                runVibrator(1);
                 super.onPostExecute(s);
                 Log.d(TAG, "response  - " + s);
-
-                // TODO: speak function 빠른길(1), 편한길(2), 안전한 길(3) 구분.
+                if(search_flag.equals(SEARCH_FAST)) {
+                    speak(1);
+                } else if (search_flag.equals(SEARCH_COMF)) {
+                    speak(2);
+                    return ;
+                } else if (search_flag.equals(SEARCH_SAFE)) {
+                    speak(3);
+                    return ;
+                }
                 //Toast.makeText(MainActivity.this,"size :"+pathList.size(), Toast.LENGTH_LONG).show();
 
                 if(path_flag == 0){ // 0 : 시작과 끝 정상적으로 존재 및 연결
@@ -432,6 +437,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 }else if(path_flag == 4){ // 4 : 시작 노드와 도착 노드 사이 연결이 안되어 있음
                     Toast.makeText(MainActivity.this,"Error Code : "+path_flag+", 시작 노드와 도착 노드 사이 연결이 안되어 있음.", Toast.LENGTH_LONG).show();
                 }
+                speak(4);
+
             }
 
             private ArrayList<HashMap<String, String >> getPathData(){
