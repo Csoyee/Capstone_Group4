@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import org.json.JSONObject;
 
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,7 +25,9 @@ public class ReviewComf extends Activity {
     private static final String TAG_ID = "id";
     private static final String TAG_LATITUDE = "latitude";
     private static final String TAG_LONGITUDE ="longitude";
-
+    private static final String COMF_GOOD = "1";
+    private static final String COMF_LONG = "2";
+    private static final String COMF_BAD = "3";
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +41,7 @@ public class ReviewComf extends Activity {
     public void mOnGood ( View v ) {
 
         Log.e("debugging: ", "Click Good");
+        pathSendingTest("http://13.125.247.173/getReview.php", COMF_GOOD);
         finish();
     }
 
@@ -45,6 +49,8 @@ public class ReviewComf extends Activity {
     public void mOnFar ( View v ) {
 
         Log.e("debugging: ", "Click Far");
+
+        pathSendingTest("http://13.125.247.173/getReview.php", COMF_LONG);
         finish();
     }
 
@@ -52,6 +58,7 @@ public class ReviewComf extends Activity {
     public void mOnBad ( View v ) {
 
         Log.e("debugging: ", "Click Bad");
+        pathSendingTest("http://13.125.247.173/getReview.php", COMF_BAD);
         finish();
     }
 
@@ -64,11 +71,10 @@ public class ReviewComf extends Activity {
         return true;
     }
 
-    private void pathSendingTest(String url ) {
+    private void pathSendingTest(String url , final String feedback) {
         class PathSending extends AsyncTask<String, Void, String> {
             //sample path list
             ArrayList<HashMap<String, String >> pathfortest = new ArrayList<HashMap<String, String>>() ;
-
             @Override
             protected String doInBackground(String... params) {
 
@@ -121,10 +127,12 @@ public class ReviewComf extends Activity {
                 }
 
                 // TODO: 어떤 평가 결과 였는지에 따라서 결과를 보내는 column 추가.
+
                 postParameters = postParameters + "start_latitude="+pathfortest.get(0).get(TAG_LATITUDE)
                         +" & start_longtitude="  + pathfortest.get(0).get(TAG_LONGITUDE)
                         + "& end_latitude=" + pathfortest.get(num-1).get(TAG_LATITUDE)
-                        + "& end_longtitude= " + pathfortest.get(num-1).get(TAG_LONGITUDE);
+                        + "& end_longtitude= " + pathfortest.get(num-1).get(TAG_LONGITUDE)
+                        + "& review= " + feedback;
                 Log.e("debugging,", postParameters + num);
                 return postParameters;
             }
