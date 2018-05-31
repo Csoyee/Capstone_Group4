@@ -5,6 +5,10 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
@@ -14,6 +18,7 @@ import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.maps.overlay.NMapPOIitem;
 import com.nhn.android.maps.overlay.NMapPathData;
 import com.nhn.android.maps.overlay.NMapPathLineStyle;
+import com.nhn.android.mapviewer.overlay.NMapCalloutOverlay;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 import com.nhn.android.mapviewer.overlay.NMapPathDataOverlay;
@@ -47,6 +52,7 @@ public class OverlayManager extends NMapActivity {
     public NMapOverlayManager mOverlayManager;
 
     NMapController MapController;
+
 
     public OverlayManager (Context context, NMapView mapview, NMapController mapcontroller) {
         // 생성자
@@ -253,7 +259,6 @@ public class OverlayManager extends NMapActivity {
                             } else if (convList.get(i).get("type").equals("toilet")) {
                                 if(MainActivity.toilet) {
                                     item = toiletPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
-
                                 }
                             }
 
@@ -272,6 +277,7 @@ public class OverlayManager extends NMapActivity {
                             }
                             if(cafePOI != null) {
                                 cafedataOverlay = mOverlayManager.createPOIdataOverlay(cafePOI, null); // TODO: drawable image
+                                cafedataOverlay.setOnStateChangeListener(onPOIdataStateItemChangeListener);
 
                                 if (cafedataOverlay.size() > 0) {
                                     cafedataOverlay.showAllPOIdata(0);
@@ -285,6 +291,7 @@ public class OverlayManager extends NMapActivity {
                             }
                             if(toiletPOI != null) {
                                 toiletdataOverlay = mOverlayManager.createPOIdataOverlay(toiletPOI, null); // TODO: drawable image
+                                toiletdataOverlay.setOnStateChangeListener(onPOIdataStateItemChangeListener);
 
                                 if (toiletdataOverlay.size() > 0) {
                                     toiletdataOverlay.showAllPOIdata(0);
@@ -299,6 +306,8 @@ public class OverlayManager extends NMapActivity {
                             if(ATMPOI != null) {
 
                                 ATMdataOverlay = mOverlayManager.createPOIdataOverlay(ATMPOI, null); // TODO: drawable image
+                                ATMdataOverlay.setOnStateChangeListener(onPOIdataStateItemChangeListener);
+
                                 if (ATMdataOverlay.size() > 0) {
                                     ATMdataOverlay.showAllPOIdata(0);
                                 }
@@ -311,6 +320,8 @@ public class OverlayManager extends NMapActivity {
                             }
                             if (stationPOI != null) {
                                 stationdataOverlay = mOverlayManager.createPOIdataOverlay(stationPOI, null); // TODO: drawable image
+                                stationdataOverlay.setOnStateChangeListener(onPOIdataStateItemChangeListener);
+
                                 if (stationdataOverlay.size() > 0) {
                                     stationdataOverlay.showAllPOIdata(0);
                                 }
@@ -324,6 +335,7 @@ public class OverlayManager extends NMapActivity {
                             }
                             if (hospitalPOI != null) {
                                 hospitadataOverlay = mOverlayManager.createPOIdataOverlay(hospitalPOI, null); // TODO: drawable image
+                                hospitadataOverlay.setOnStateChangeListener(onPOIdataStateItemChangeListener);
 
                                 if (hospitadataOverlay.size() > 0) {
                                     hospitadataOverlay.showAllPOIdata(0);
@@ -337,7 +349,7 @@ public class OverlayManager extends NMapActivity {
                             }
                             if(drugPOI != null) {
                                 drugdataOverlay = mOverlayManager.createPOIdataOverlay(drugPOI, null); // TODO: drawable image
-
+                                drugdataOverlay.setOnStateChangeListener(onPOIdataStateItemChangeListener);
                                 if (drugdataOverlay.size() > 0) {
                                     drugdataOverlay.showAllPOIdata(0);
                                 }
@@ -377,12 +389,25 @@ public class OverlayManager extends NMapActivity {
 
     }
 
+    private final NMapPOIdataOverlay.OnStateChangeListener onPOIdataStateItemChangeListener = new NMapPOIdataOverlay.OnStateChangeListener() {
+        @Override
+        public void onFocusChanged(NMapPOIdataOverlay nMapPOIdataOverlay, NMapPOIitem nMapPOIitem) {
+
+        }
+
+        @Override
+        public void onCalloutClick(NMapPOIdataOverlay poiDataOverlay, NMapPOIitem item) {
+            Log.e("??", "fortest");
+            MainActivity.setEndPoint(item.getTitle());
+        }
+    };
 
     private final NMapPOIdataOverlay.OnFloatingItemChangeListener onPOIdataFloatingItemChangeListener = new NMapPOIdataOverlay.OnFloatingItemChangeListener() {
 
         @Override
         public void onPointChanged(NMapPOIdataOverlay poiDataOverlay, NMapPOIitem item) {
             NGeoPoint point = item.getPoint();
+            Log.e("??", "fortest");
 //            findPlacemarkAtLocation(point.longitude, point.latitude);
 //            item.setTitle(null);
         }

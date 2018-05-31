@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nhn.android.maps.NMapActivity;
@@ -105,6 +106,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     boolean start_default = false;
     String start_addr, end_addr;
     int path_flag;
+
+    static EditText endPoint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,6 +279,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
 
     private void MapViewSetting () {
+        endPoint = (EditText) findViewById(R.id.EndText);
         mMapView.setClickable(true);
         mMapView.setEnabled(true);
         mMapView.setFocusable(true);
@@ -355,7 +359,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                         postParameters = postParameters+"startaddr="+ start_addr;
                     }
                     postParameters=postParameters+"& endaddr="+ end_addr;
-                    
+
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setReadTimeout(10000);
                     conn.setConnectTimeout(15000);
@@ -489,4 +493,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         g.execute(url);
     }
 
+    public static void setEndPoint(String fortest) {
+        endPoint.setText(fortest, TextView.BufferType.EDITABLE);
+    }
 }

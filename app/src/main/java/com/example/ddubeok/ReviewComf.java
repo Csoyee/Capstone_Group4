@@ -35,8 +35,6 @@ public class ReviewComf extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.review_comf);
 
-        // TODO: image 안나옴...ㅠ
-
     }
     public void mOnGood ( View v ) {
 
