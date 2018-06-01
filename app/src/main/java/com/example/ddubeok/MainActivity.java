@@ -65,13 +65,14 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     public static boolean cafe = false;
     public static boolean hospital = false;
     public static boolean station = false;
-
     public static boolean ATM = false;
     public static boolean toilet = false;
 
     public static boolean sound = true;
     public static boolean vibration = true;
 
+
+    private static boolean movable_pin_exist = false;
 
     TextToSpeech TTS_object ;
     Vibrator vibrator ;
@@ -273,7 +274,16 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             }
         });
 
-//         overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
+        Button select_end = (Button) findViewById(R.id.overlay);
+        select_end.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick (View view ) {
+                if(!movable_pin_exist) {
+                    overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
+                    movable_pin_exist = true;
+                }
+            }
+        });
 
     }
 
@@ -358,7 +368,14 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                         //postParameters = postParameters+"latitude=NULL& longitude=NULL &";
                         postParameters = postParameters+"startaddr="+ start_addr;
                     }
-                    postParameters=postParameters+"& endaddr="+ end_addr;
+
+                    if(end_addr.indexOf(" / ") == -1) {
+                        postParameters=postParameters+"& endaddr="+ end_addr;
+                    } else {
+                        String[] temp = end_addr.split(" / ");
+                        postParameters = postParameters+ "& end_latitude="+temp[0]
+                                + "& end_longtitude=" + temp[1];
+                    }
 
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setReadTimeout(10000);
@@ -441,8 +458,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 }else if(path_flag == 4){ // 4 : 시작 노드와 도착 노드 사이 연결이 안되어 있음
                     Toast.makeText(MainActivity.this,"Error Code : "+path_flag+", 시작 노드와 도착 노드 사이 연결이 안되어 있음.", Toast.LENGTH_LONG).show();
                 }
-                speak(4);
-
+                movable_pin_exist = false ;
             }
 
             private ArrayList<HashMap<String, String >> getPathData(){

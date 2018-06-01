@@ -32,6 +32,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.chrono.MinguoChronology;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -377,28 +378,42 @@ public class OverlayManager extends NMapActivity {
         NMapPOIdata poIData = new NMapPOIdata(1, mMapViewerResourceProvider);
 
         poIData.beginPOIdata(1);
-        NMapPOIitem item = poIData.addPOIitem(null, "Touch and Drag to Move", marker1, 0);
+        NMapPOIitem item = poIData.addPOIitem(null, "도착지 지정", marker1, 0);
 
         item.setPoint(MapController.getMapCenter());
         item.setFloatingMode(NMapPOIitem.FLOATING_TOUCH | NMapPOIitem.FLOATING_DRAG);
-        item.setRightButton(true);
 
         NMapPOIdataOverlay poidataOverlay = mOverlayManager.createPOIdataOverlay(poIData, null);
 
         poidataOverlay.setOnFloatingItemChangeListener(onPOIdataFloatingItemChangeListener);
+        poidataOverlay.setOnStateChangeListener(onMoveableStateItemChangeListener);
 
     }
 
     private final NMapPOIdataOverlay.OnStateChangeListener onPOIdataStateItemChangeListener = new NMapPOIdataOverlay.OnStateChangeListener() {
         @Override
         public void onFocusChanged(NMapPOIdataOverlay nMapPOIdataOverlay, NMapPOIitem nMapPOIitem) {
-
+            // when you click overlay --> nothing to do
         }
 
         @Override
         public void onCalloutClick(NMapPOIdataOverlay poiDataOverlay, NMapPOIitem item) {
-            Log.e("??", "fortest");
+            // when you click Callout of overlay --> setText: edit text
             MainActivity.setEndPoint(item.getTitle());
+        }
+    };
+
+    private final NMapPOIdataOverlay.OnStateChangeListener onMoveableStateItemChangeListener = new NMapPOIdataOverlay.OnStateChangeListener() {
+        @Override
+        public void onFocusChanged(NMapPOIdataOverlay nMapPOIdataOverlay, NMapPOIitem nMapPOIitem) {
+            // when you click overlay --> nothing to do
+        }
+
+        @Override
+        public void onCalloutClick(NMapPOIdataOverlay poiDataOverlay, NMapPOIitem item) {
+            // when you click Callout of overlay --> setText: edit text
+            NGeoPoint point = item.getPoint();
+            MainActivity.setEndPoint(Math.ceil(point.getLatitude() * 1000000)/1000000+" / "+Math.ceil(point.getLongitude()*1000000)/1000000);
         }
     };
 
@@ -407,9 +422,9 @@ public class OverlayManager extends NMapActivity {
         @Override
         public void onPointChanged(NMapPOIdataOverlay poiDataOverlay, NMapPOIitem item) {
             NGeoPoint point = item.getPoint();
-            Log.e("??", "fortest");
 //            findPlacemarkAtLocation(point.longitude, point.latitude);
 //            item.setTitle(null);
         }
+
     };
 }
