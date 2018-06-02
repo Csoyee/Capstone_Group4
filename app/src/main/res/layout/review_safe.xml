@@ -34,10 +34,10 @@
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_height="60dp"
             android:layout_gravity="center"
-            android:visibility="visible"
-            android:src="@drawable/police" />
+            android:src="@drawable/police"
+            android:visibility="visible" />
     </LinearLayout>
 
     <View

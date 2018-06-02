@@ -16,7 +16,7 @@
         android:layout_marginEnd="16dp"
         android:clickable="true"
         android:src="@drawable/newlocation"
-        app:backgroundTint="@color/colorPrimaryDark"
+        app:backgroundTint="@color/design3"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -29,7 +29,7 @@
         android:layout_marginEnd="16dp"
         android:clickable="true"
         android:src="@drawable/newsetting"
-        app:backgroundTint="@color/colorPrimaryDark"
+        app:backgroundTint="@color/design3"
         app:fabSize="mini"
         app:layout_constraintBottom_toTopOf="@+id/GPSbutton"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -48,8 +48,8 @@
             android:id="@+id/Layout"
             android:layout_width="match_parent"
             android:layout_height="140dp"
-            android:background="@color/colorPrimaryDark"
-            android:backgroundTint="@color/colorPrimaryDark"
+            android:background="@android:color/background_light"
+            android:backgroundTint="@color/design3"
             android:orientation="vertical">
 
             <LinearLayout
@@ -96,13 +96,16 @@
                 <Button
                     android:id="@+id/overlay"
                     android:layout_width="130dp"
-                    android:layout_height="90dp"
+                    android:layout_height="match_parent"
                     android:layout_marginRight="20dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="10dp"
                     android:layout_weight="1"
+                    android:background="@color/design4"
                     android:gravity="center_vertical|center_horizontal|center"
-                    android:padding="5dp"
-                    android:text="도착지 지정" />
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:text="도착지 선택"
+                    android:textColor="@color/design2" />
 
             </LinearLayout>
 
@@ -119,21 +122,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="빠른 길" />
+                    android:text="빠른 길"
+                    android:theme="@style/MyButton" />
 
                 <Button
                     android:id="@+id/COMFORT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="편한 길" />
+                    android:text="편한 길"
+                    android:theme="@style/MyButton"/>
 
                 <Button
                     android:id="@+id/SAFE"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="안전한 길" />
+                    android:text="안전한 길"
+                    android:theme="@style/MyButton"/>
             </LinearLayout>
 
         </LinearLayout>
