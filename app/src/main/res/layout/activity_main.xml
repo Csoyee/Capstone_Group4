@@ -16,7 +16,7 @@
         android:layout_marginEnd="16dp"
         android:clickable="true"
         android:src="@drawable/newlocation"
-        app:backgroundTint="@color/design3"
+        app:backgroundTint="@color/design4"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -29,7 +29,7 @@
         android:layout_marginEnd="16dp"
         android:clickable="true"
         android:src="@drawable/newsetting"
-        app:backgroundTint="@color/design3"
+        app:backgroundTint="@color/design4"
         app:fabSize="mini"
         app:layout_constraintBottom_toTopOf="@+id/GPSbutton"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -126,20 +126,20 @@
                     android:theme="@style/MyButton" />
 
                 <Button
-                    android:id="@+id/COMFORT"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="편한 길"
-                    android:theme="@style/MyButton"/>
-
-                <Button
                     android:id="@+id/SAFE"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="안전한 길"
-                    android:theme="@style/MyButton"/>
+                    android:theme="@style/MyButton" />
+
+                <Button
+                    android:id="@+id/COMFORT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="편한 길"
+                    android:theme="@style/MyButton" />
             </LinearLayout>
 
         </LinearLayout>
