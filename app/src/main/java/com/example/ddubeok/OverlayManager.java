@@ -371,7 +371,7 @@ public class OverlayManager extends NMapActivity {
     }
 
     // moveable overlay Marker
-    public void moveableOverlayMarker() {
+    public NMapPOIdataOverlay moveableOverlayMarker() {
         int marker1 = NMapPOIflagType.PIN;
 
         // set POI data
@@ -388,8 +388,12 @@ public class OverlayManager extends NMapActivity {
         poidataOverlay.setOnFloatingItemChangeListener(onPOIdataFloatingItemChangeListener);
         poidataOverlay.setOnStateChangeListener(onMoveableStateItemChangeListener);
 
+        return poidataOverlay ;
     }
 
+    public void  removeMoveableOverlay (NMapPOIdataOverlay target) {
+        mOverlayManager.removeOverlay(target);
+    }
     private final NMapPOIdataOverlay.OnStateChangeListener onPOIdataStateItemChangeListener = new NMapPOIdataOverlay.OnStateChangeListener() {
         @Override
         public void onFocusChanged(NMapPOIdataOverlay nMapPOIdataOverlay, NMapPOIitem nMapPOIitem) {

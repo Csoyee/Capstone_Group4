@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapView;
+import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -109,6 +110,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     int path_flag;
 
     static EditText endPoint;
+
+    // end overlay
+    NMapPOIdataOverlay end_overlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -278,9 +282,13 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         select_end.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick (View view ) {
+
                 if(!movable_pin_exist) {
-                    overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
+                    end_overlay = overlayManager.moveableOverlayMarker(); // 클릭해서 이동가능한 overlay marker
                     movable_pin_exist = true;
+                } else {
+                    overlayManager.removeMoveableOverlay(end_overlay);
+                    movable_pin_exist = false;
                 }
             }
         });
