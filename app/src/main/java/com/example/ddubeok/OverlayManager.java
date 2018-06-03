@@ -79,6 +79,7 @@ public class OverlayManager extends NMapActivity {
     // 지도 위의 모든 오버레이를 제거하는 함수
     public void clearOverlayPath(){
         mOverlayManager.clearOverlays();
+        convMarker(); // 경로 탐색 함수 불려도 편의시설 overlay 유지 
     }
 
     public void testOverlayPath (ArrayList<HashMap<String, String >> pathList) {
