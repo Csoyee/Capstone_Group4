@@ -79,7 +79,7 @@ public class OverlayManager extends NMapActivity {
     // 지도 위의 모든 오버레이를 제거하는 함수
     public void clearOverlayPath(){
         mOverlayManager.clearOverlays();
-        convMarker(); // 경로 탐색 함수 불려도 편의시설 overlay 유지 
+        convMarker(); // 경로 탐색 함수 불려도 편의시설 overlay 유지
     }
 
     public void testOverlayPath (ArrayList<HashMap<String, String >> pathList) {
@@ -238,29 +238,30 @@ public class OverlayManager extends NMapActivity {
                         for (int i = 0; i < conv.length(); i++) {
                             if ( convList.get(i).get("type").equals("cafe") ) {
                                 if(MainActivity.cafe) {
-                                    item = cafePOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
+                                    item = cafePOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), NMapPOIflagType.CAFE, 0);
                                 }
                             } else if (convList.get(i).get("type").equals("drugstore")){
                                 if(MainActivity.drugstore) {
-                                    item = drugPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
+                                    item = drugPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), NMapPOIflagType.DRUG, 0);
                                 }
                             } else if (convList.get(i).get("type").equals("station")) {
                                 if(MainActivity.station) {
-                                    item = stationPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
+                                    item = stationPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), NMapPOIflagType.SUB, 0);
                                 }
                             } else if (convList.get(i).get("type").equals("hospital")) {
                                 if(MainActivity.hospital) {
-                                    item = hospitalPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
+                                    item = hospitalPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), NMapPOIflagType.HOS, 0);
 
                                 }
                             } else if (convList.get(i).get("type").equals("ATM")) {
                                 if(MainActivity.ATM) {
-                                    item = ATMPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
+                                    item = ATMPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), NMapPOIflagType.ATM, 0);
+
 
                                 }
                             } else if (convList.get(i).get("type").equals("toilet")) {
                                 if(MainActivity.toilet) {
-                                    item = toiletPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), markerID, 0);
+                                    item = toiletPOI.addPOIitem( Double.parseDouble(convList.get(i).get("longtitude")) , Double.parseDouble(convList.get(i).get("latitude")) , convList.get(i).get("addr"), NMapPOIflagType.TOI, 0);
                                 }
                             }
 

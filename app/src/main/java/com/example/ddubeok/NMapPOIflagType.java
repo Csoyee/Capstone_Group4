@@ -23,12 +23,20 @@ package com.example.ddubeok;
 public class NMapPOIflagType {
 	public static final int UNKNOWN = 0x0000;
 
+
 	// Single POI icons
 	private static final int SINGLE_POI_BASE = 0x0100;
 
 	// Spot, Pin icons
 	public static final int SPOT = SINGLE_POI_BASE + 1;
 	public static final int PIN = SPOT + 1;
+	public static final int DRUG = PIN + 1;
+	public static final int CAFE = DRUG + 1;
+	public static final int HOS = CAFE + 1;
+	public static final int TOI = HOS + 1;
+	public static final int SUB = TOI + 1;
+	public static final int ATM = SUB + 1;
+
 
 	// Direction POI icons: From, To
 	private static final int DIRECTION_POI_BASE = 0x0200;
