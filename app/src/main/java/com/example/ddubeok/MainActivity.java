@@ -237,7 +237,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 }
 
                 if(searchFlag) {
-                    // POST data
+                    // 지도 위 오버레이 모두 제거하기
+                    overlayManager.clearOverlayPath();
+                    // post Data and get Data
                     controlData(SERVER_URL, SEARCH_COMF);
                     startActivity( new Intent(MainActivity.this, ReviewComf.class )) ;
                 }
@@ -271,7 +273,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 }
 
                 if(searchFlag) {
-                    // POST data
+                    // 지도 위 오버레이 모두 제거하기
+                    overlayManager.clearOverlayPath();
+                    // post Data and get Data
                     controlData(SERVER_URL, SEARCH_SAFE);
                     startActivity( new Intent(MainActivity.this, ReviewSafe.class )) ;
                 }
@@ -385,6 +389,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                                 + "& end_longtitude=" + temp[1];
                     }
 
+                    postParameters=postParameters+"& path_type="+ search_flag;
+
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setReadTimeout(10000);
                     conn.setConnectTimeout(15000);
@@ -446,15 +452,15 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     speak(1);
                 } else if (search_flag.equals(SEARCH_COMF)) {
                     speak(2);
-                    return ;
+                    //return ;
                 } else if (search_flag.equals(SEARCH_SAFE)) {
                     speak(3);
-                    return ;
+                    //return ;
                 }
                 //Toast.makeText(MainActivity.this,"size :"+pathList.size(), Toast.LENGTH_LONG).show();
 
                 if(path_flag == 0){ // 0 : 시작과 끝 정상적으로 존재 및 연결
-                    //Toast.makeText(MainActivity.this,"size :"+pathList.size(), Toast.LENGTH_LONG).show();
+                    // Toast.makeText(MainActivity.this,"size :"+pathList.size(), Toast.LENGTH_LONG).show();
                     // overlay test 오버레이 그리기
                     overlayManager.testOverlayPath(pathList);
                 }else if(path_flag == 1){ // 1 : 시작 노드와 도착 노드 둘다 일치하는 노드가 서버에 없음
@@ -464,7 +470,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 }else if(path_flag == 3){ // 3 : 도착 노드와 일치하는 노드가 서버에 없음
                     Toast.makeText(MainActivity.this,"Error Code : "+path_flag+", 도착 노드와 일치하는 노드가 서버에 없음.", Toast.LENGTH_LONG).show();
                 }else if(path_flag == 4){ // 4 : 시작 노드와 도착 노드 사이 연결이 안되어 있음
-                    Toast.makeText(MainActivity.this,"Error Code : "+path_flag+", 시작 노드와 도착 노드 사이 연결이 안되어 있음.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this,"Error Code : "+path_flag+", 시작 노드와 도착 노드 사이 연결이 안되어 있음. / 서버로 요청이 너무 많습니다.", Toast.LENGTH_LONG).show();
                 }
                 movable_pin_exist = false ;
             }
