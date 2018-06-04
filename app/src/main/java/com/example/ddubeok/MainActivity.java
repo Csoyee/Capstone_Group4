@@ -333,6 +333,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     @Override
     public void onDestroy() {
         super.onDestroy();
+
         if(TTS_object != null)   TTS_object.shutdown();
 
         for(int index = 0 ; index < len ; index ++ ){
@@ -522,6 +523,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         ControlJsonData g = new ControlJsonData();
         g.execute(url);
     }
+
+
+
 
     public static void setEndPoint(String fortest) {
         endPoint.setText(fortest, TextView.BufferType.EDITABLE);
