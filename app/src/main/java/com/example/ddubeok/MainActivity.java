@@ -82,6 +82,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
 
     private static boolean movable_pin_exist = false;
+    private static boolean movable_pin_exist_s = false;
 
     TextToSpeech TTS_object ;
     Vibrator vibrator ;
@@ -119,8 +120,10 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     int path_flag;
 
     static EditText endPoint;
+    static EditText startPoint;
 
     // end overlay
+    NMapPOIdataOverlay start_overlay;
     NMapPOIdataOverlay end_overlay;
 
     @Override
@@ -313,6 +316,21 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             }
         });
 
+        Button select_start = (Button) findViewById(R.id.overlay_s);
+        select_start.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick (View view ) {
+
+                if(!movable_pin_exist_s) {
+                    start_overlay = overlayManager.moveableStartMarker(); // 클릭해서 이동가능한 overlay marker
+                    movable_pin_exist_s = true;
+                } else {
+                    overlayManager.removeMoveableOverlay(start_overlay);
+                    movable_pin_exist_s = false;
+                }
+            }
+        });
+
     }
 
     public class UserState extends Thread {
@@ -473,6 +491,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             }
         }
     }
+
     public double getAngle(NGeoPoint n1, NGeoPoint n2) {
         double angle = atan((n2.latitude - n1.latitude) / (n2.longitude - n1.longitude));
         angle = angle*(180 / 3.141592);
@@ -491,6 +510,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
 
     private void MapViewSetting () {
+        startPoint = (EditText) findViewById(R.id.StartText);
         endPoint = (EditText) findViewById(R.id.EndText);
         mMapView.setClickable(true);
         mMapView.setEnabled(true);
@@ -565,12 +585,19 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     URL url = new URL(uri);
                     String postParameters ="";
                     JSONObject json = new JSONObject();
-                    if (start_default) {
-                        postParameters = postParameters+ "latitude="+gpsManager.mMapLocationManager.getMyLocation().getLatitude()
-                                + "& longitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude();
+                    if(start_addr.indexOf(" / ") == -1) {
+                        if (start_default) {
+                            postParameters = postParameters + "latitude=" + gpsManager.mMapLocationManager.getMyLocation().getLatitude()
+                                    + "& longitude=" + gpsManager.mMapLocationManager.getMyLocation().getLongitude();
+                        } else {
+                            //postParameters = postParameters+"latitude=NULL& longitude=NULL &";
+                            postParameters = postParameters + "startaddr=" + start_addr;
+                        }
                     } else {
-                        //postParameters = postParameters+"latitude=NULL& longitude=NULL &";
-                        postParameters = postParameters+"startaddr="+ start_addr;
+                        String[] temp = start_addr.split(" / ");
+                        postParameters = postParameters+ "latitude="+temp[0]
+                                + "& longitude=" + temp[1];
+
                     }
 
                     if(end_addr.indexOf(" / ") == -1) {
@@ -665,6 +692,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     Toast.makeText(MainActivity.this,"Error Code : "+path_flag+", 시작 노드와 도착 노드 사이 연결이 안되어 있음. / 서버로 요청이 너무 많습니다.", Toast.LENGTH_LONG).show();
                 }
                 movable_pin_exist = false ;
+                movable_pin_exist_s = false ;
             }
 
             private ArrayList<HashMap<String, String >> getPathData(){
@@ -717,6 +745,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
 
 
 
+    public static void setStartPoint(String fortest) {
+        startPoint.setText(fortest, TextView.BufferType.EDITABLE);
+    }
 
     public static void setEndPoint(String fortest) {
         endPoint.setText(fortest, TextView.BufferType.EDITABLE);

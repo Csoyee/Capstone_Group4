@@ -393,6 +393,26 @@ public class OverlayManager extends NMapActivity {
         return poidataOverlay ;
     }
 
+    public NMapPOIdataOverlay moveableStartMarker() {
+        int marker1 = NMapPOIflagType.PIN;
+
+        // set POI data
+        NMapPOIdata poIData = new NMapPOIdata(1, mMapViewerResourceProvider);
+
+        poIData.beginPOIdata(1);
+        NMapPOIitem item = poIData.addPOIitem(null, "출발지 지정", marker1, 0);
+
+        item.setPoint(MapController.getMapCenter());
+        item.setFloatingMode(NMapPOIitem.FLOATING_TOUCH | NMapPOIitem.FLOATING_DRAG);
+
+        NMapPOIdataOverlay poidataOverlay = mOverlayManager.createPOIdataOverlay(poIData, null);
+
+        poidataOverlay.setOnFloatingItemChangeListener(onPOIdataFloatingItemChangeListener);
+        poidataOverlay.setOnStateChangeListener(onMoveableStartItemChangeListener);
+
+        return poidataOverlay ;
+    }
+
     public void  removeMoveableOverlay (NMapPOIdataOverlay target) {
         mOverlayManager.removeOverlay(target);
     }
@@ -422,6 +442,21 @@ public class OverlayManager extends NMapActivity {
             MainActivity.setEndPoint(Math.ceil(point.getLatitude() * 1000000)/1000000+" / "+Math.ceil(point.getLongitude()*1000000)/1000000);
         }
     };
+
+    private final NMapPOIdataOverlay.OnStateChangeListener onMoveableStartItemChangeListener = new NMapPOIdataOverlay.OnStateChangeListener() {
+        @Override
+        public void onFocusChanged(NMapPOIdataOverlay nMapPOIdataOverlay, NMapPOIitem nMapPOIitem) {
+            // when you click overlay --> nothing to do
+        }
+
+        @Override
+        public void onCalloutClick(NMapPOIdataOverlay poiDataOverlay, NMapPOIitem item) {
+            // when you click Callout of overlay --> setText: edit text
+            NGeoPoint point = item.getPoint();
+            MainActivity.setStartPoint(Math.ceil(point.getLatitude() * 1000000)/1000000+" / "+Math.ceil(point.getLongitude()*1000000)/1000000);
+        }
+    };
+
 
     private final NMapPOIdataOverlay.OnFloatingItemChangeListener onPOIdataFloatingItemChangeListener = new NMapPOIdataOverlay.OnFloatingItemChangeListener() {
 
