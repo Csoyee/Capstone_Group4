@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapView;
+import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
 import org.json.JSONArray;
@@ -33,6 +34,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static com.nhn.android.maps.maplib.NGeoPoint.getDistance;
+import static java.lang.Math.abs;
+import static java.lang.Math.atan;
 
 
 public class MainActivity extends NMapActivity implements TextToSpeech.OnInitListener{
@@ -50,6 +55,9 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
     private static final String SEARCH_FAST = "1";
     private static final String SEARCH_COMF = "2";
     private static final String SEARCH_SAFE = "3";
+
+    HashMap<String, String > User_position = new HashMap<String, String>();
+    UserState t;
 
     ArrayList<HashMap<String, String >> pathList = new ArrayList<HashMap<String, String>>() ;
     String mJsonString;
@@ -98,7 +106,8 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             "잠시 후 8시 방향 입니다",
             "잠시 후 9시 방향 입니다",
             "잠시 후 10시 방향 입니다",
-            "잠시 후 11시 방향 입니다"
+            "잠시 후 11시 방향 입니다",
+            "경로 재탐색을 시작합니다"
     };
 
     static int len = -1;
@@ -204,6 +213,12 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                     overlayManager.clearOverlayPath();
                     // post Data and get Data
                     controlData(SERVER_URL, SEARCH_FAST);
+
+                    if(t != null)
+                        t.interrupt();
+                    t = new UserState();
+                    t.start();
+
                 }
             }
         });
@@ -298,6 +313,180 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
             }
         });
 
+    }
+
+    public class UserState extends Thread {
+        @Override
+        public void run() {
+            int i = 0;
+            int tail = 0;
+            int currentNode = 1;
+            int stack = 0;
+            double angle = 0;
+
+            while(true){
+                tail++;
+                if(tail > 2)
+                {
+                    NGeoPoint temp = new NGeoPoint();
+                    temp.latitude = Double.parseDouble(pathList.get(currentNode).get("latitude"));
+                    temp.longitude = Double.parseDouble(pathList.get(currentNode).get("longitude"));
+
+                    NGeoPoint myLocation = gpsManager.mMapLocationManager.getMyLocation();
+
+                    Log.d("distance : ", String.valueOf(getDistance(temp, myLocation)));
+                    if(getDistance(temp, myLocation) < 5)
+                    {
+                        if(Double.parseDouble(pathList.get(currentNode).get("angle")) < 15 || Double.parseDouble(pathList.get(currentNode).get("angle")) > 345 )
+                        {
+                            Log.d("TG : ", "직진 방향");
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 15 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 45)
+                        {
+                            //1시 방향
+                            speak(9);
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 45 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 75)
+                        {
+                            //2??諛⑺뼢
+                            speak(10);
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 75 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 105)
+                        {
+                            //3??諛⑺뼢
+                            speak(11);
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 105 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 135)
+                        {
+                            //4??諛⑺뼢
+                            speak(12);
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 135 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 165)
+                        {
+                            //5??諛⑺뼢
+                            speak(13);
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 165 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 195)
+                        {
+                            //6??諛⑺뼢
+                            speak(14);
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 195 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 225)
+                        {
+                            //7??諛⑺뼢
+                            speak(15);
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 225 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 255)
+                        {
+                            //8??諛⑺뼢
+                            speak(16);
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 255 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 285)
+                        {
+                            //9??諛⑺뼢
+                            speak(17);
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 285 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 315)
+                        {
+                            //10??諛⑺뼢
+                            speak(18);
+                        }
+                        else if(Double.parseDouble(pathList.get(currentNode).get("angle")) >= 315 && Double.parseDouble(pathList.get(currentNode).get("angle")) < 345)
+                        {
+                            //11??諛⑺뼢
+                            speak(19);
+                        }
+
+                        tail = 0;
+                        currentNode= currentNode + 1;
+
+                        if(currentNode == pathList.size())
+                        {
+                            speak(5);
+                            return;
+                        }
+                    }
+                }
+
+                if(gpsManager.mMapLocationManager.isMyLocationFixed()) {
+                    NGeoPoint myLocation = gpsManager.mMapLocationManager.getMyLocation();
+
+                    User_position.put("latitude"+String.valueOf(tail % 5), String.valueOf(myLocation.getLatitude()));
+                    User_position.put("longtitude"+String.valueOf(tail % 5), String.valueOf(myLocation.getLongitude()));
+                }
+
+                if(tail > 5)
+                {
+                    NGeoPoint temp1 = new NGeoPoint();
+                    NGeoPoint temp2 = new NGeoPoint();
+                    NGeoPoint current = new NGeoPoint();
+
+                    temp1.latitude = Double.parseDouble(pathList.get(currentNode-1).get("latitude"));
+                    temp1.longitude = Double.parseDouble(pathList.get(currentNode-1).get("longitude"));
+
+                    temp2.latitude = Double.parseDouble(pathList.get(currentNode).get("latitude"));
+                    temp2.longitude = Double.parseDouble(pathList.get(currentNode).get("longitude"));
+
+                    angle = 0;
+
+                    while(i < 5)
+                    {
+                        current.latitude = Double.parseDouble(User_position.get("latitude"+String.valueOf(i % 5)));
+                        current.longitude = Double.parseDouble(User_position.get("longtitude"+String.valueOf(i % 5)));
+
+                        angle += getAngle(temp1, temp2) - getAngle(temp1, current);
+                        i++;
+                    }
+
+                    i = 0;
+
+                    Log.d("angle : ", String.valueOf(abs(angle / 5)));
+                    // TODO 경로 재탐색.
+                    //경로 이탈 발생했을 경우(20도 이상)
+                    if(abs(angle / 5) > 20 && tail % 5 == 0)
+                    {
+                        stack++;
+                        speak(6);
+                    }
+                    else
+                        stack = 0;
+
+                    //경로 이탈한지 5초 경과했을 경우
+                    if(stack > 4)
+                    {
+                        stack = 0;
+                        speak(20);
+
+                        overlayManager.clearOverlayPath();
+                        controlData(SERVER_URL, SEARCH_FAST);
+
+                    }
+
+
+                }
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
+    }
+    public double getAngle(NGeoPoint n1, NGeoPoint n2) {
+        double angle = atan((n2.latitude - n1.latitude) / (n2.longitude - n1.longitude));
+        angle = angle*(180 / 3.141592);
+        if (angle < 0) {
+            angle = 90.0 + abs(angle);
+        }
+        else {
+            angle = 90.0 - angle;
+        }
+        if (n2.longitude < n1.longitude) {
+            angle += 180.0;
+        }
+
+        return angle;
     }
 
 
