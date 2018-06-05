@@ -139,6 +139,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
         // overlay object
         overlayManager = new OverlayManager(this, mMapView, mMapController);
 
+        callConvMarker();
 
         // GPS object
         gpsManager = new GPSManager(this, mMapView, mMapController, overlayManager);
@@ -341,6 +342,7 @@ public class MainActivity extends NMapActivity implements TextToSpeech.OnInitLis
                 TTS_object.shutdown();
             }
         }
+
     }
 
     @Override
